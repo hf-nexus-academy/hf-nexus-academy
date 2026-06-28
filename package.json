@@ -16,9 +16,9 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "next": "15.3.3",
-    "react": "19.0.0",
-    "react-dom": "19.0.0",
+    "next": "15.3.8",
+    "react": "19.0.3",
+    "react-dom": "19.0.3",
     "typescript": "5.7.3",
     "@prisma/client": "6.2.1",
     "prisma": "6.2.1",
@@ -71,7 +71,7 @@
     "autoprefixer": "10.4.20",
     "postcss": "8.4.49",
     "eslint": "9.18.0",
-    "eslint-config-next": "15.1.4",
+    "eslint-config-next": "15.3.8",
     "tsx": "4.19.2"
   },
   "engines": {
