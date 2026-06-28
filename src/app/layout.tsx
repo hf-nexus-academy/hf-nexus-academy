@@ -1,5 +1,4 @@
 import type { Metadata } from "next";
-import { Fraunces, Inter, JetBrains_Mono } from "next/font/google";
 
 import "./globals.css";
 import { Navbar } from "@/components/layout/navbar";
@@ -7,28 +6,6 @@ import { Footer } from "@/components/layout/footer";
 import { WhatsAppFloatingButton } from "@/components/layout/whatsapp-button";
 import { AuthProvider } from "@/components/providers/auth-provider";
 import { Toaster } from "@/components/ui/toaster";
-
-const fraunces = Fraunces({
-  subsets: ["latin"],
-  variable: "--font-fraunces",
-  weight: ["400", "500", "600", "700"],
-  style: ["normal", "italic"],
-  display: "swap",
-});
-
-const inter = Inter({
-  subsets: ["latin"],
-  variable: "--font-inter",
-  weight: ["400", "500", "600", "700"],
-  display: "swap",
-});
-
-const jetbrainsMono = JetBrains_Mono({
-  subsets: ["latin"],
-  variable: "--font-jetbrains-mono",
-  weight: ["400", "500"],
-  display: "swap",
-});
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://hf-nexus.com";
 
@@ -77,7 +54,7 @@ export default function RootLayout({
   children,
 }: Readonly<{ children: React.ReactNode }>) {
   return (
-    <html lang="en" className={`${fraunces.variable} ${inter.variable} ${jetbrainsMono.variable}`}>
+    <html lang="en">
       <body className="flex min-h-screen flex-col">
         <AuthProvider>
           <Navbar />

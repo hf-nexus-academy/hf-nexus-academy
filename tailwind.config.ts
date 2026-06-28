@@ -80,9 +80,17 @@ const config: Config = {
         },
       },
       fontFamily: {
-        display: ["var(--font-fraunces)", "serif"],
-        body: ["var(--font-inter)", "sans-serif"],
-        mono: ["var(--font-jetbrains-mono)", "monospace"],
+        display: ["Georgia", "Cambria", "Times New Roman", "serif"],
+        body: [
+          "-apple-system",
+          "BlinkMacSystemFont",
+          "Segoe UI",
+          "Roboto",
+          "Helvetica Neue",
+          "Arial",
+          "sans-serif",
+        ],
+        mono: ["Consolas", "Monaco", "Courier New", "monospace"],
       },
       borderRadius: {
         lg: "var(--radius)",
