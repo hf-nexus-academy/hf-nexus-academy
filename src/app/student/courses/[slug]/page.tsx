@@ -7,16 +7,18 @@ import { PortalSectionHeader } from "@/components/portal/shared/section-header";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 
-export async function generateMetadata({ params }: { params: { slug: string } }) {
-  return { title: params.slug.replace(/-/g, " ") };
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
+  return { title: slug.replace(/-/g, " ") };
 }
 
-export default async function StudentCourseDetailPage({ params }: { params: { slug: string } }) {
+export default async function StudentCourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   const session = await auth();
   const student = await getStudentByUserId(session!.user.id);
   if (!student) notFound();
 
-  const enrollment = await getEnrollmentByCourseSlug(student.id, params.slug);
+  const enrollment = await getEnrollmentByCourseSlug(student.id, slug);
   if (!enrollment) notFound();
 
   const { course } = enrollment;

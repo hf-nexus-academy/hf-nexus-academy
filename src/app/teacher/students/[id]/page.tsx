@@ -20,12 +20,13 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "destructive" | "ou
   EXCUSED: "outline",
 };
 
-export default async function TeacherStudentDetailPage({ params }: { params: { id: string } }) {
+export default async function TeacherStudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   const teacher = await getTeacherByUserId(session!.user.id);
   if (!teacher) notFound();
 
-  const detail = await getTeacherStudentDetail(teacher.id, params.id);
+  const detail = await getTeacherStudentDetail(teacher.id, id);
   if (!detail || !detail.student) notFound();
 
   const { student, enrollments, submissions, attendance } = detail;

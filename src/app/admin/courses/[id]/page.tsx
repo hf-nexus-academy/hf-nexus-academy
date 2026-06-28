@@ -23,8 +23,9 @@ async function getCourseDetail(id: string) {
   });
 }
 
-export default async function AdminCourseDetailPage({ params }: { params: { id: string } }) {
-  const course = await getCourseDetail(params.id);
+export default async function AdminCourseDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const course = await getCourseDetail(id);
   if (!course) notFound();
 
   await getAllTeachersForSelect();

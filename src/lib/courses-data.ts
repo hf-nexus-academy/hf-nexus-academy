@@ -161,6 +161,40 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
       durationWeeks: 16,
     },
   ],
+  aqeedah: [
+    {
+      slug: "aqeedah-foundations",
+      title: "Foundations of Aqeedah",
+      subtitle:
+        "An introduction to the core articles of Islamic belief — Tawheed, Risalat, and Akhirat — built on clear evidence from Quran and Sunnah.",
+      level: "BEGINNER",
+      durationWeeks: 10,
+    },
+    {
+      slug: "aqeedah-sifat-e-bari",
+      title: "Sifat-e-Bari (Divine Attributes)",
+      subtitle:
+        "A detailed study of Allah's divine names and attributes (Asma wa Sifat), and how classical scholars have understood and explained them.",
+      level: "INTERMEDIATE",
+      durationWeeks: 14,
+    },
+    {
+      slug: "aqeedah-sharah-aqaid",
+      title: "Sharah Aqaid",
+      subtitle:
+        "A study of the classical Aqeedah text Sharah Aqaid, a core part of the traditional Dars-e-Nizami curriculum.",
+      level: "ADVANCED",
+      durationWeeks: 24,
+    },
+    {
+      slug: "aqeedah-comparative",
+      title: "Comparative Aqeedah",
+      subtitle:
+        "An examination of different schools of thought within the Ummah and a respectful, evidence-based response to common misconceptions.",
+      level: "ADVANCED",
+      durationWeeks: 16,
+    },
+  ],
 };
 
 export const CATEGORY_META: Record<
@@ -196,5 +230,11 @@ export const CATEGORY_META: Record<
     description:
       "Classical Islamic logic and reasoning frameworks, from foundational definitions to advanced texts.",
     teacherSlug: "mufti-ahsan-ilyas",
+  },
+  aqeedah: {
+    title: "Aqeedah Courses",
+    description:
+      "Build clarity and confidence in core Islamic beliefs, from foundational concepts through classical Aqeedah texts.",
+    teacherSlug: "mufti-muhammad-faizan",
   },
 };

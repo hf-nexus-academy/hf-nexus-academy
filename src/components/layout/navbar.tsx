@@ -21,6 +21,7 @@ const NAV_LINKS = [
       { label: "Hadith", href: "/courses/hadith" },
       { label: "Fiqh", href: "/courses/fiqh" },
       { label: "Arabic", href: "/courses/arabic" },
+      { label: "Aqeedah", href: "/courses/aqeedah" },
       { label: "Logic (Mantiq)", href: "/courses/logic" },
     ],
   },

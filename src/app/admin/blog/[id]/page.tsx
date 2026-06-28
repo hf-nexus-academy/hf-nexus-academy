@@ -8,8 +8,9 @@ export async function generateMetadata() {
   return { title: "Edit Blog Post" };
 }
 
-export default async function AdminEditBlogPostPage({ params }: { params: { id: string } }) {
-  const post = await getBlogPostById(params.id);
+export default async function AdminEditBlogPostPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const post = await getBlogPostById(id);
   if (!post) notFound();
 
   return (

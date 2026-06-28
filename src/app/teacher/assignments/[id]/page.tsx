@@ -21,12 +21,13 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "destructive" | "ou
   ASSIGNED: "outline",
 };
 
-export default async function TeacherAssignmentDetailPage({ params }: { params: { id: string } }) {
+export default async function TeacherAssignmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   const teacher = await getTeacherByUserId(session!.user.id);
   if (!teacher) notFound();
 
-  const assignment = await getAssignmentWithSubmissions(teacher.id, params.id);
+  const assignment = await getAssignmentWithSubmissions(teacher.id, id);
   if (!assignment) notFound();
 
   return (

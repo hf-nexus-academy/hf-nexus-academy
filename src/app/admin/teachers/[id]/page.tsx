@@ -12,8 +12,9 @@ export async function generateMetadata() {
   return { title: "Teacher Detail" };
 }
 
-export default async function AdminTeacherDetailPage({ params }: { params: { id: string } }) {
-  const teacher = await getTeacherFullDetail(params.id);
+export default async function AdminTeacherDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const teacher = await getTeacherFullDetail(id);
   if (!teacher) notFound();
 
   return (

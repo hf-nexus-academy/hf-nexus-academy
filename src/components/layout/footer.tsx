@@ -10,6 +10,7 @@ const FOOTER_COLUMNS = [
       { label: "Hadith", href: "/courses/hadith" },
       { label: "Fiqh", href: "/courses/fiqh" },
       { label: "Arabic Language", href: "/courses/arabic" },
+      { label: "Aqeedah", href: "/courses/aqeedah" },
       { label: "Logic (Mantiq)", href: "/courses/logic" },
     ],
   },

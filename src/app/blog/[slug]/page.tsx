@@ -15,9 +15,10 @@ async function getPost(slug: string) {
   });
 }
 
-export async function generateMetadata({ params }: { params: { slug: string } }): Promise<Metadata> {
+export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
+  const { slug } = await params;
   try {
-    const post = await getPost(params.slug);
+    const post = await getPost(slug);
     if (!post) return {};
     return {
       title: post.metaTitle || post.title,
@@ -35,10 +36,11 @@ export async function generateMetadata({ params }: { params: { slug: string } })
   }
 }
 
-export default async function BlogPostPage({ params }: { params: { slug: string } }) {
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const { slug } = await params;
   let post;
   try {
-    post = await getPost(params.slug);
+    post = await getPost(slug);
   } catch (error) {
     console.error("Failed to load blog post:", error);
   }

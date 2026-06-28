@@ -18,12 +18,17 @@ const CATEGORIES = [
   {
     slug: "fiqh",
     title: "Fiqh",
-    description: "Purification, Prayer, Fasting, Zakat, Transactions",
+    description: "Qudoori for beginners, Hidayah (4 Jilds) for advanced students",
   },
   {
     slug: "arabic",
     title: "Arabic Language",
     description: "Reading, Grammar, Vocabulary, Conversation",
+  },
+  {
+    slug: "aqeedah",
+    title: "Aqeedah",
+    description: "Foundations, Sifat-e-Bari, Sharah Aqaid, Comparative Aqeedah",
   },
   {
     slug: "logic",
@@ -50,7 +55,7 @@ export function CoursesOverview() {
           </Link>
         </div>
 
-        <div className="grid sm:grid-cols-2 lg:grid-cols-5 gap-px bg-cream-50/10 rounded-lg overflow-hidden">
+        <div className="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-6 gap-px bg-cream-50/10 rounded-lg overflow-hidden">
           {CATEGORIES.map((cat, i) => (
             <motion.div key={cat.slug} initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: i * 0.06 }}>
               <Link

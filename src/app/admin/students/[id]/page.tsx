@@ -13,8 +13,9 @@ export async function generateMetadata() {
   return { title: "Student Detail" };
 }
 
-export default async function AdminStudentDetailPage({ params }: { params: { id: string } }) {
-  const student = await getStudentFullDetail(params.id);
+export default async function AdminStudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
+  const student = await getStudentFullDetail(id);
   if (!student) notFound();
 
   const allCourses = await getAllCourses();

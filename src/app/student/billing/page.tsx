@@ -22,8 +22,9 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "destructive" | "ou
 export default async function StudentBillingPage({
   searchParams,
 }: {
-  searchParams: { success?: string };
+  searchParams: Promise<{ success?: string }>;
 }) {
+  const { success } = await searchParams;
   const session = await auth();
   const student = await prisma.student.findUnique({ where: { userId: session!.user.id } });
 
@@ -39,7 +40,7 @@ export default async function StudentBillingPage({
         <PayPalCaptureHandler />
       </Suspense>
 
-      {searchParams.success && (
+      {success && (
         <div className="flex items-center gap-3 rounded-lg border border-emerald-300 bg-emerald-50 p-5 mb-6">
           <CheckCircle2 className="h-5 w-5 text-emerald-700" />
           <p className="text-sm text-navy-950">Your subscription payment was successful.</p>
