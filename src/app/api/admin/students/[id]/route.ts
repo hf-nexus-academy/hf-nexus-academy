@@ -9,7 +9,8 @@ const schema = z.object({
   age: z.coerce.number().int().min(3).max(100).optional(),
 });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,7 +23,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
-    const student = await prisma.student.findUnique({ where: { id: params.id } });
+    const student = await prisma.student.findUnique({ where: { id } });
     if (!student) {
       return NextResponse.json({ error: "Student not found." }, { status: 404 });
     }
@@ -32,7 +33,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     if (parsed.data.age !== undefined) {
-      await prisma.student.update({ where: { id: params.id }, data: { age: parsed.data.age } });
+      await prisma.student.update({ where: { id }, data: { age: parsed.data.age } });
     }
 
     return NextResponse.json({ message: "Student updated." });

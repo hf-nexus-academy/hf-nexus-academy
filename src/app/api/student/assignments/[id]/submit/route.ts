@@ -8,7 +8,8 @@ const schema = z.object({
   content: z.string().min(5).max(5000),
 });
 
-export async function POST(req: Request, { params }: { params: { id: string } }) {
+export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
 
   if (!session?.user || session.user.role !== "STUDENT") {
@@ -28,13 +29,13 @@ export async function POST(req: Request, { params }: { params: { id: string } })
       return NextResponse.json({ error: "Student profile not found." }, { status: 404 });
     }
 
-    const assignment = await prisma.assignment.findUnique({ where: { id: params.id } });
+    const assignment = await prisma.assignment.findUnique({ where: { id } });
     if (!assignment) {
       return NextResponse.json({ error: "Assignment not found." }, { status: 404 });
     }
 
     const existing = await prisma.submission.findUnique({
-      where: { assignmentId_studentId: { assignmentId: params.id, studentId: student.id } },
+      where: { assignmentId_studentId: { assignmentId: id, studentId: student.id } },
     });
 
     if (existing) {
@@ -45,7 +46,7 @@ export async function POST(req: Request, { params }: { params: { id: string } })
 
     const submission = await prisma.submission.create({
       data: {
-        assignmentId: params.id,
+        assignmentId: id,
         studentId: student.id,
         content: parsed.data.content,
         status: isLate ? "LATE" : "SUBMITTED",

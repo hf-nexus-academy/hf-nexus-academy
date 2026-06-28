@@ -6,7 +6,8 @@ import { prisma } from "@/lib/prisma";
 
 const schema = z.object({ isPublished: z.boolean() });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -19,7 +20,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
-    await prisma.testimonial.update({ where: { id: params.id }, data: { isPublished: parsed.data.isPublished } });
+    await prisma.testimonial.update({ where: { id }, data: { isPublished: parsed.data.isPublished } });
 
     return NextResponse.json({ message: "Testimonial updated." });
   } catch (error) {
@@ -28,14 +29,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    await prisma.testimonial.delete({ where: { id: params.id } });
+    await prisma.testimonial.delete({ where: { id } });
     return NextResponse.json({ message: "Testimonial deleted." });
   } catch (error) {
     console.error("Admin delete testimonial error:", error);

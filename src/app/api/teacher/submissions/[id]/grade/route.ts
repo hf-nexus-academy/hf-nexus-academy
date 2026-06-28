@@ -9,7 +9,8 @@ const schema = z.object({
   feedback: z.string().max(2000).optional(),
 });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || (session.user.role !== "TEACHER" && session.user.role !== "ADMIN")) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -28,7 +29,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const submission = await prisma.submission.findUnique({
-      where: { id: params.id },
+      where: { id },
       include: { assignment: true },
     });
 
@@ -44,7 +45,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     }
 
     const updated = await prisma.submission.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         score: parsed.data.score,
         feedback: parsed.data.feedback,

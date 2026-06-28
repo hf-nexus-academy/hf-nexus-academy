@@ -11,7 +11,8 @@ const schema = z.object({
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).optional(),
 });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -24,7 +25,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
-    const existing = await prisma.blogPost.findUnique({ where: { id: params.id } });
+    const existing = await prisma.blogPost.findUnique({ where: { id } });
     if (!existing) {
       return NextResponse.json({ error: "Blog post not found." }, { status: 404 });
     }
@@ -32,7 +33,7 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
     const becomingPublished = parsed.data.status === "PUBLISHED" && existing.status !== "PUBLISHED";
 
     await prisma.blogPost.update({
-      where: { id: params.id },
+      where: { id },
       data: {
         ...parsed.data,
         publishedAt: becomingPublished ? new Date() : undefined,
@@ -46,14 +47,15 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
   }
 }
 
-export async function DELETE(_req: Request, { params }: { params: { id: string } }) {
+export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   try {
-    await prisma.blogPost.delete({ where: { id: params.id } });
+    await prisma.blogPost.delete({ where: { id } });
     return NextResponse.json({ message: "Blog post deleted." });
   } catch (error) {
     console.error("Admin delete blog post error:", error);

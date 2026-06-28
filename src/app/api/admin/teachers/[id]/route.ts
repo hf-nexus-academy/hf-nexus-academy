@@ -9,7 +9,8 @@ const schema = z.object({
   isActive: z.boolean().optional(),
 });
 
-export async function PATCH(req: Request, { params }: { params: { id: string } }) {
+export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const { id } = await params;
   const session = await auth();
   if (!session?.user || session.user.role !== "ADMIN") {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
@@ -22,13 +23,13 @@ export async function PATCH(req: Request, { params }: { params: { id: string } }
       return NextResponse.json({ error: "Invalid input." }, { status: 400 });
     }
 
-    const teacher = await prisma.teacher.findUnique({ where: { id: params.id } });
+    const teacher = await prisma.teacher.findUnique({ where: { id } });
     if (!teacher) {
       return NextResponse.json({ error: "Teacher not found." }, { status: 404 });
     }
 
     if (parsed.data.isPublished !== undefined) {
-      await prisma.teacher.update({ where: { id: params.id }, data: { isPublished: parsed.data.isPublished } });
+      await prisma.teacher.update({ where: { id }, data: { isPublished: parsed.data.isPublished } });
     }
 
     if (parsed.data.isActive !== undefined) {
