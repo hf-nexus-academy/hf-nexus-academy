@@ -3,7 +3,12 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LogOut, LayoutDashboard, Users, GraduationCap, BookOpen, CreditCard, CalendarCheck, MessageSquareQuote, Newspaper, Megaphone, BarChart3, Home, Bell, FileText, Settings, UserPlus } from "lucide-react";
+import {
+  LogOut, LayoutDashboard, Users, GraduationCap, BookOpen, CreditCard,
+  CalendarCheck, MessageSquareQuote, Newspaper, Megaphone, BarChart3,
+  Home, Bell, FileText, Settings, UserPlus, ClipboardList, Award,
+  NotebookPen, UserCircle, Video, FolderOpen, Inbox
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
 
@@ -23,6 +28,13 @@ const ICON_MAP: Record<string, React.ComponentType<{ className?: string }>> = {
   FileText,
   Settings,
   UserPlus,
+  ClipboardList,
+  Award,
+  NotebookPen,
+  UserCircle,
+  Video,
+  FolderOpen,
+  Inbox,
 };
 
 export interface PortalNavItem {
