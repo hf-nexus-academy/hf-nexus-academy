@@ -75,7 +75,7 @@
     "tsx": "4.19.2"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": "20.x"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
