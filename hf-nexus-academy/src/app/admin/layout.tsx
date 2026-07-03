@@ -12,6 +12,8 @@ import {
   Megaphone,
   BarChart3,
   Tag,
+  HelpCircle,
+  Settings,
 } from "lucide-react";
 
 import { auth } from "@/lib/auth";
@@ -30,9 +32,11 @@ const ADMIN_NAV: PortalNavItem[] = [
   { label: "Payments", href: "/admin/payments", icon: CreditCard },
   { label: "Attendance", href: "/admin/attendance", icon: CalendarCheck },
   { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
+  { label: "FAQs", href: "/admin/faqs", icon: HelpCircle },
   { label: "Blog", href: "/admin/blog", icon: Newspaper },
   { label: "Announcements", href: "/admin/announcements", icon: Megaphone },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+  { label: "Site Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
