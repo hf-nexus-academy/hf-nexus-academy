@@ -250,6 +250,11 @@ model Course {
   durationWeeks Int?
   coverImageUrl String?
   isPublished   Boolean        @default(true)
+  // Controls whether the course appears in "Featured" placements (home page, etc.)
+  isFeatured    Boolean        @default(false)
+  // Controls whether new enrollments/checkout are accepted, independent of isPublished
+  // (e.g. a course can stay visible/published while temporarily closed to new students).
+  enrollmentOpen Boolean       @default(true)
   teacherId     String?
   // Optional fixed monthly price for courses sold individually (e.g. Qudoori, Hidayah)
   // rather than bundled under the Starter/Standard/Premium subscription plans.
@@ -262,9 +267,12 @@ model Course {
   lessons     Lesson[]
   enrollments Enrollment[]
   modules     CourseModule[]
+  payments    Payment[]
 
   @@index([category])
   @@index([slug])
+  @@index([isPublished])
+  @@index([isFeatured])
 }
 
 model CourseModule {
@@ -438,7 +446,15 @@ model Payment {
   studentId       String
   provider        PaymentProvider
   providerRef     String          @unique // Stripe charge/session id or PayPal order id
-  plan            PlanTier
+  // Exactly one of `planKey` or `courseId` should be set: a payment is either for a
+  // subscription plan (referencing PricingPlan.key) or for an individually-priced
+  // course. Both nullable rather than a single discriminated field, so future
+  // payment types (bundles, one-off resources) can be added as additional nullable
+  // references without altering existing rows or breaking this model's shape.
+  // planKey is a free-form string (not an enum) so admins can add new pricing
+  // plans from the admin portal without a schema migration.
+  planKey         String?
+  courseId        String?
   billingCycle     BillingCycle    @default(MONTHLY)
   amountCents     Int
   currency        String          @default("USD")
@@ -446,10 +462,14 @@ model Payment {
   createdAt       DateTime        @default(now())
   updatedAt       DateTime        @updatedAt
 
-  student Student @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  student Student      @relation(fields: [studentId], references: [id], onDelete: Cascade)
+  course  Course?      @relation(fields: [courseId], references: [id])
+  plan    PricingPlan? @relation(fields: [planKey], references: [key])
 
   @@index([studentId])
   @@index([providerRef])
+  @@index([courseId])
+  @@index([planKey])
 }
 
 // ---------------------------------------------------------
@@ -499,6 +519,53 @@ model ContactLead {
 }
 
 // ---------------------------------------------------------
+// PRICING PLANS (admin-managed subscription tiers)
+// ---------------------------------------------------------
+
+model PricingPlan {
+  id          String   @id @default(cuid())
+  // Stable, admin-editable machine key used to reference this plan from Stripe/PayPal
+  // checkout metadata and from Payment.planKey. Free-form rather than an enum so
+  // admins can add, rename, or retire pricing tiers without a schema migration.
+  key         String   @unique
+  name        String
+  description String
+  priceUSDCents Int
+  priceGBPCents Int
+  priceEURCents Int
+  features   String[]
+  isHighlighted Boolean @default(false)
+  isPublished   Boolean @default(true)
+  displayOrder  Int     @default(0)
+  stripePriceId String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  payments Payment[]
+
+  @@index([isPublished])
+}
+
+// ---------------------------------------------------------
+// FAQ (admin-managed, shown on home page and elsewhere)
+// ---------------------------------------------------------
+
+model Faq {
+  id          String   @id @default(cuid())
+  question    String
+  answer      String   @db.Text
+  // Optional grouping so FAQs can later be scoped to a specific page/section
+  // (e.g. "pricing", "general") without needing a schema change.
+  placement   String   @default("general")
+  isPublished Boolean  @default(true)
+  displayOrder Int     @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isPublished, placement])
+}
+
+// ---------------------------------------------------------
 // TESTIMONIALS (admin-managed, placeholders only at launch)
 // ---------------------------------------------------------
 
@@ -525,4 +592,36 @@ model Announcement {
   message   String   @db.Text
   audience  Role[]
   createdAt DateTime @default(now())
+}
+
+// ---------------------------------------------------------
+// SITE SETTINGS (admin-managed global settings)
+// Single-row table — always upsert by key "global"
+// ---------------------------------------------------------
+
+model SiteSettings {
+  id                    String  @id @default(cuid())
+  key                   String  @unique @default("global")
+  // Contact
+  whatsappNumber        String  @default("")
+  contactEmail          String  @default("")
+  contactPhone          String  @default("")
+  // Social
+  facebookUrl           String  @default("")
+  instagramUrl          String  @default("")
+  youtubeUrl            String  @default("")
+  tiktokUrl             String  @default("")
+  twitterUrl            String  @default("")
+  // Branding
+  logoUrl               String  @default("")
+  faviconUrl            String  @default("")
+  // SEO
+  metaTitle             String  @default("HF Nexus Academy")
+  metaDescription       String  @default("")
+  // Footer
+  footerTagline         String  @default("")
+  // Google
+  googleAnalyticsId     String  @default("")
+  googleVerificationId  String  @default("")
+  updatedAt             DateTime @updatedAt
 }
