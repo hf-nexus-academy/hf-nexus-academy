@@ -1,25 +1,37 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
+import {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  BookOpen,
+  CreditCard,
+  CalendarCheck,
+  MessageSquareQuote,
+  Newspaper,
+  Megaphone,
+  BarChart3,
+} from "lucide-react";
 
 import { auth } from "@/lib/auth";
-import { PortalSidebar, PortalMobileNav } from "@/components/portal/shared/portal-sidebar";
+import { PortalSidebar, PortalMobileNav, type PortalNavItem } from "@/components/portal/shared/portal-sidebar";
 
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
 };
 
-const ADMIN_NAV = [
-  { label: "Dashboard", href: "/admin", iconName: "LayoutDashboard" },
-  { label: "Students", href: "/admin/students", iconName: "Users" },
-  { label: "Teachers", href: "/admin/teachers", iconName: "GraduationCap" },
-  { label: "Courses", href: "/admin/courses", iconName: "BookOpen" },
-  { label: "Payments", href: "/admin/payments", iconName: "CreditCard" },
-  { label: "Attendance", href: "/admin/attendance", iconName: "CalendarCheck" },
-  { label: "Testimonials", href: "/admin/testimonials", iconName: "MessageSquareQuote" },
-  { label: "Blog", href: "/admin/blog", iconName: "Newspaper" },
-  { label: "Announcements", href: "/admin/announcements", iconName: "Megaphone" },
-  { label: "Analytics", href: "/admin/analytics", iconName: "BarChart3" },
-] as const;
+const ADMIN_NAV: PortalNavItem[] = [
+  { label: "Dashboard", href: "/admin", icon: LayoutDashboard },
+  { label: "Students", href: "/admin/students", icon: Users },
+  { label: "Teachers", href: "/admin/teachers", icon: GraduationCap },
+  { label: "Courses", href: "/admin/courses", icon: BookOpen },
+  { label: "Payments", href: "/admin/payments", icon: CreditCard },
+  { label: "Attendance", href: "/admin/attendance", icon: CalendarCheck },
+  { label: "Testimonials", href: "/admin/testimonials", icon: MessageSquareQuote },
+  { label: "Blog", href: "/admin/blog", icon: Newspaper },
+  { label: "Announcements", href: "/admin/announcements", icon: Megaphone },
+  { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
+];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
   const session = await auth();

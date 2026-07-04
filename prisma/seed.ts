@@ -335,6 +335,50 @@ async function main() {
       durationWeeks: 16,
       teacherSlug: "mufti-ahsan-ilyas",
     },
+    {
+      slug: "aqeedah-foundations",
+      title: "Foundations of Aqeedah",
+      subtitle: "Core Islamic beliefs",
+      description:
+        "An introduction to the core articles of Islamic belief — Tawheed, Risalat, and Akhirat — built on clear evidence from Quran and Sunnah.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.BEGINNER,
+      durationWeeks: 10,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-sifat-e-bari",
+      title: "Sifat-e-Bari (Divine Attributes)",
+      subtitle: "Allah's names and attributes",
+      description:
+        "A detailed study of Allah's divine names and attributes (Asma wa Sifat), and how classical scholars have understood and explained them.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.INTERMEDIATE,
+      durationWeeks: 14,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-sharah-aqaid",
+      title: "Sharah Aqaid",
+      subtitle: "Classical Aqeedah text",
+      description:
+        "A study of the classical Aqeedah text Sharah Aqaid, a core part of the traditional Dars-e-Nizami curriculum.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.ADVANCED,
+      durationWeeks: 24,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-comparative",
+      title: "Comparative Aqeedah",
+      subtitle: "Schools of thought and misconceptions",
+      description:
+        "An examination of different schools of thought within the Ummah and a respectful, evidence-based response to common misconceptions.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.ADVANCED,
+      durationWeeks: 16,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
   ];
 
   for (const c of courseSeeds) {

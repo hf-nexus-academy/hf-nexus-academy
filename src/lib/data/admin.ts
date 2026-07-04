@@ -10,10 +10,10 @@ export async function getAdminAnalytics() {
     pendingLeads,
     newLeadsThisMonth,
   ] = await Promise.all([
-    prisma.user.count({ where: { role: "STUDENT" as any } }),
-prisma.user.count({ where: { role: "TEACHER" as any } }),
+    prisma.user.count({ where: { role: "STUDENT" } }),
+    prisma.user.count({ where: { role: "TEACHER" } }),
     prisma.course.count(),
-    prisma.enrollment.count({ where: { status: "ACTIVE" as any } }),
+    prisma.enrollment.count({ where: { status: "ACTIVE" } }),
     prisma.payment.aggregate({
       where: { status: "SUCCEEDED" },
       _sum: { amountCents: true },
