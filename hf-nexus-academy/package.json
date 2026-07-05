@@ -16,7 +16,7 @@
     "db:studio": "prisma studio"
   },
   "dependencies": {
-    "next": "15.1.4",
+    "next": "15.5.20",
     "react": "19.0.0",
     "react-dom": "19.0.0",
     "typescript": "5.7.3",
@@ -76,7 +76,7 @@
     "tsx": "4.19.2"
   },
   "engines": {
-    "node": ">=18.18.0"
+    "node": "20.x"
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
