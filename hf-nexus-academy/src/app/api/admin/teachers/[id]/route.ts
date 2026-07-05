@@ -41,15 +41,24 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       await prisma.user.update({ where: { id: teacher.userId }, data: { isActive: parsed.data.isActive } });
     }
 
-    const profileData: Record<string, unknown> = {};
-    if (parsed.data.title !== undefined) profileData.title = parsed.data.title;
-    if (parsed.data.bio !== undefined) profileData.bio = parsed.data.bio;
-    if (parsed.data.specializations !== undefined) profileData.specializations = parsed.data.specializations;
-    if (parsed.data.experienceYears !== undefined) profileData.experienceYears = parsed.data.experienceYears;
-    if (parsed.data.photoUrl !== undefined) profileData.photoUrl = parsed.data.photoUrl || null;
+    const hasProfileUpdate =
+      parsed.data.title !== undefined ||
+      parsed.data.bio !== undefined ||
+      parsed.data.specializations !== undefined ||
+      parsed.data.experienceYears !== undefined ||
+      parsed.data.photoUrl !== undefined;
 
-    if (Object.keys(profileData).length > 0) {
-      await prisma.teacher.update({ where: { id }, data: profileData });
+    if (hasProfileUpdate) {
+      await prisma.teacher.update({
+        where: { id },
+        data: {
+          title: parsed.data.title,
+          bio: parsed.data.bio,
+          specializations: parsed.data.specializations,
+          experienceYears: parsed.data.experienceYears,
+          photoUrl: parsed.data.photoUrl !== undefined ? parsed.data.photoUrl || null : undefined,
+        },
+      });
     }
 
     return NextResponse.json({ message: "Teacher updated." });
