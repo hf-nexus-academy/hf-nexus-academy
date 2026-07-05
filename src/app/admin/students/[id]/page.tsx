@@ -94,7 +94,7 @@ export default async function AdminStudentDetailPage({ params }: { params: Promi
               {student.payments.map((p) => (
                 <div key={p.id} className="flex items-center justify-between py-2.5">
                   <div>
-                    <p className="text-sm text-navy-950">{p.plan}</p>
+                    <p className="text-sm text-navy-950">{p.planKey}</p>
                     <p className="text-xs text-ink-300">{formatDate(p.createdAt)}</p>
                   </div>
                   <div className="text-right">

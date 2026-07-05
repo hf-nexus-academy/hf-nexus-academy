@@ -53,7 +53,7 @@ export default async function AdminPaymentsPage() {
               {payments.map((p) => (
                 <tr key={p.id}>
                   <td className="px-5 py-3.5 text-navy-950">{p.student.user.name}</td>
-                  <td className="px-5 py-3.5 text-ink-500">{p.plan}</td>
+                  <td className="px-5 py-3.5 text-ink-500">{p.planKey}</td>
                   <td className="px-5 py-3.5 text-ink-500">{p.provider}</td>
                   <td className="px-5 py-3.5 text-navy-950 font-medium">
                     {formatCurrency(p.amountCents, p.currency)}

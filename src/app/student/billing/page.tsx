@@ -58,7 +58,7 @@ export default async function StudentBillingPage({
           {payments.map((p) => (
             <div key={p.id} className="flex items-center justify-between gap-4 p-5">
               <div>
-                <p className="text-sm font-medium text-navy-950">{p.plan} Plan</p>
+                <p className="text-sm font-medium text-navy-950">{p.planKey} Plan</p>
                 <p className="text-xs text-ink-500 mt-0.5">
                   {p.provider} · {formatDate(p.createdAt)}
                 </p>
