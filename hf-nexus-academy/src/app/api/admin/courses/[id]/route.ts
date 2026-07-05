@@ -6,11 +6,13 @@ import { prisma } from "@/lib/prisma";
 
 const schema = z.object({
   isPublished: z.boolean().optional(),
+  teacherId: z.string().optional(),
+  title: z.string().min(2).max(200).optional(),
+  subtitle: z.string().max(200).nullable().optional(),
+  description: z.string().min(10).optional(),
+  coverImageUrl: z.string().url().nullable().optional().or(z.literal("")),
   isFeatured: z.boolean().optional(),
   enrollmentOpen: z.boolean().optional(),
-  teacherId: z.string().optional(),
-  priceMonthlyCents: z.number().int().min(0).nullable().optional(),
-  priceCurrency: z.enum(["USD", "GBP", "EUR"]).optional(),
 });
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -36,11 +38,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       where: { id },
       data: {
         isPublished: parsed.data.isPublished,
+        teacherId: parsed.data.teacherId,
+        title: parsed.data.title,
+        subtitle: parsed.data.subtitle,
+        description: parsed.data.description,
+        coverImageUrl:
+          parsed.data.coverImageUrl !== undefined ? parsed.data.coverImageUrl || null : undefined,
         isFeatured: parsed.data.isFeatured,
         enrollmentOpen: parsed.data.enrollmentOpen,
-        teacherId: parsed.data.teacherId,
-        priceMonthlyCents: parsed.data.priceMonthlyCents,
-        priceCurrency: parsed.data.priceCurrency,
       },
     });
 

@@ -1,11 +1,14 @@
 import { Star } from "lucide-react";
-import { getPublishedTestimonials } from "@/lib/data/public";
 
-export async function Testimonials() {
-  const testimonials = await getPublishedTestimonials();
+/**
+ * NOTE: Per the project brief, no fabricated student reviews are included here.
+ * This section renders a placeholder structure ready to display real testimonials
+ * once collected. Connect this to the `Testimonial` model (isPublished: true)
+ * via the admin portal's testimonial management screen.
+ */
+const PLACEHOLDER_SLOTS = [1, 2, 3];
 
-  if (testimonials.length === 0) return null;
-
+export function Testimonials() {
   return (
     <section className="bg-navy-950 py-20 lg:py-28">
       <div className="container">
@@ -19,24 +22,20 @@ export async function Testimonials() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {testimonials.map((t) => (
-            <div key={t.id} className="rounded-lg border border-cream-50/10 bg-navy-900/50 p-7 flex flex-col">
-              <div className="flex gap-0.5 text-gold-500 mb-4">
-                {Array.from({ length: t.rating }).map((_, i) => (
+          {PLACEHOLDER_SLOTS.map((slot) => (
+            <div
+              key={slot}
+              className="rounded-lg border border-dashed border-cream-50/15 bg-navy-900/40 p-7 flex flex-col items-center justify-center text-center min-h-[220px]"
+            >
+              <div className="flex gap-1 mb-4 text-gold-500/30">
+                {Array.from({ length: 5 }).map((_, i) => (
                   <Star key={i} className="h-4 w-4 fill-current" />
                 ))}
               </div>
-              <p className="text-sm text-cream-50/80 leading-relaxed flex-1 mb-5">
-                &ldquo;{t.quote}&rdquo;
+              <p className="text-sm text-cream-50/35">
+                Testimonial pending — published reviews will appear here once
+                approved in the admin portal.
               </p>
-              <div className="pt-4 border-t border-cream-50/10">
-                <p className="text-sm font-medium text-cream-50">{t.studentName}</p>
-                {(t.country || t.courseTaken) && (
-                  <p className="text-xs text-cream-50/40 mt-0.5">
-                    {[t.country, t.courseTaken].filter(Boolean).join(" · ")}
-                  </p>
-                )}
-              </div>
             </div>
           ))}
         </div>

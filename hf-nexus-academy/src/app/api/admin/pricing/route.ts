@@ -4,34 +4,22 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const createSchema = z.object({
-  key: z.string().min(1).regex(/^[A-Z0-9_]+$/, "Key must be uppercase letters, numbers, or underscores."),
-  name: z.string().min(1),
-  description: z.string().min(1),
-  priceUSDCents: z.number().int().min(0),
-  priceGBPCents: z.number().int().min(0),
-  priceEURCents: z.number().int().min(0),
-  features: z.array(z.string()),
+const schema = z.object({
+  key: z
+    .string()
+    .min(2)
+    .max(40)
+    .regex(/^[A-Z0-9_]+$/, "Use uppercase letters, numbers, and underscores only (e.g. STARTER)."),
+  name: z.string().min(2).max(100),
+  description: z.string().min(2).max(500),
+  priceUSDCents: z.coerce.number().int().min(0),
+  priceGBPCents: z.coerce.number().int().min(0),
+  priceEURCents: z.coerce.number().int().min(0),
+  features: z.array(z.string().min(1)).default([]),
   isHighlighted: z.boolean().default(false),
-  isPublished: z.boolean().default(true),
-  displayOrder: z.number().int().default(0),
+  displayOrder: z.coerce.number().int().default(0),
   stripePriceId: z.string().optional(),
 });
-
-export async function GET() {
-  const session = await auth();
-  if (!session?.user || session.user.role !== "ADMIN") {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
-
-  try {
-    const plans = await prisma.pricingPlan.findMany({ orderBy: { displayOrder: "asc" } });
-    return NextResponse.json({ plans });
-  } catch (error) {
-    console.error("Admin list pricing plans error:", error);
-    return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
-  }
-}
 
 export async function POST(req: Request) {
   const session = await auth();
@@ -41,7 +29,7 @@ export async function POST(req: Request) {
 
   try {
     const body = await req.json();
-    const parsed = createSchema.safeParse(body);
+    const parsed = schema.safeParse(body);
     if (!parsed.success) {
       return NextResponse.json({ error: "Invalid input.", details: parsed.error.flatten() }, { status: 400 });
     }
@@ -52,7 +40,8 @@ export async function POST(req: Request) {
     }
 
     const plan = await prisma.pricingPlan.create({ data: parsed.data });
-    return NextResponse.json({ plan }, { status: 201 });
+
+    return NextResponse.json({ message: "Pricing plan created.", plan }, { status: 201 });
   } catch (error) {
     console.error("Admin create pricing plan error:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });

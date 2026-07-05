@@ -54,6 +54,42 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       },
     });
 
+    // Recalculate course progress: percentage of this course's assignments
+    // (assignments attached to a lesson in the course) the student has had graded.
+    // Assignments not attached to any lesson aren't tied to a specific course and
+    // are excluded from this calculation.
+    if (submission.assignment.lessonId) {
+      const lesson = await prisma.lesson.findUnique({
+        where: { id: submission.assignment.lessonId },
+        select: { courseId: true },
+      });
+
+      if (lesson) {
+        const courseAssignments = await prisma.assignment.findMany({
+          where: { lesson: { courseId: lesson.courseId } },
+          select: { id: true },
+        });
+        const assignmentIds = courseAssignments.map((a) => a.id);
+
+        if (assignmentIds.length > 0) {
+          const gradedCount = await prisma.submission.count({
+            where: {
+              studentId: submission.studentId,
+              assignmentId: { in: assignmentIds },
+              status: "GRADED",
+            },
+          });
+
+          const progress = Math.round((gradedCount / assignmentIds.length) * 100);
+
+          await prisma.enrollment.updateMany({
+            where: { studentId: submission.studentId, courseId: lesson.courseId },
+            data: { progress: Math.min(progress, 100) },
+          });
+        }
+      }
+    }
+
     // Notify the student
     const student = await prisma.student.findUnique({ where: { id: submission.studentId } });
     if (student) {

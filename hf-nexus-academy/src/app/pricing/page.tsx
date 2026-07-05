@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
-import { PricingCards, type PricingPlanDisplay } from "@/components/shared/pricing-cards";
-import { Faq } from "@/components/home/faq";
-import { getPublishedPricingPlans } from "@/lib/data/public";
+import { PricingCards } from "@/components/shared/pricing-cards";
+import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -10,18 +10,14 @@ export const metadata: Metadata = {
   alternates: { canonical: "/pricing" },
 };
 
-export const revalidate = 60;
-
 export default async function PricingPage() {
-  const dbPlans = await getPublishedPricingPlans();
-  const plans: PricingPlanDisplay[] = dbPlans.map((p) => ({
-    key: p.key,
-    name: p.name,
-    description: p.description,
-    priceMonthlyCents: { USD: p.priceUSDCents, GBP: p.priceGBPCents, EUR: p.priceEURCents },
-    features: p.features,
-    highlighted: p.isHighlighted,
-  }));
+  const [plans, faqs] = await Promise.all([
+    prisma.pricingPlan.findMany({ where: { isPublished: true }, orderBy: { displayOrder: "asc" } }),
+    prisma.faq.findMany({
+      where: { isPublished: true, placement: "pricing" },
+      orderBy: { displayOrder: "asc" },
+    }),
+  ]);
 
   return (
     <div>
@@ -44,7 +40,21 @@ export default async function PricingPage() {
         </div>
       </section>
 
-      <Faq placement="pricing" />
+      {faqs.length > 0 && (
+        <section className="bg-cream-100 py-16 lg:py-20">
+          <div className="container max-w-2xl">
+            <h2 className="font-display text-2xl text-navy-950 mb-6 text-center">Pricing FAQ</h2>
+            <Accordion type="single" collapsible>
+              {faqs.map((faq) => (
+                <AccordionItem key={faq.id} value={faq.id}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
     </div>
   );
 }

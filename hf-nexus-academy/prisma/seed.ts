@@ -335,6 +335,50 @@ async function main() {
       durationWeeks: 16,
       teacherSlug: "mufti-ahsan-ilyas",
     },
+    {
+      slug: "aqeedah-foundations",
+      title: "Foundations of Aqeedah",
+      subtitle: "Core Islamic beliefs",
+      description:
+        "An introduction to the core articles of Islamic belief — Tawheed, Risalat, and Akhirat — built on clear evidence from Quran and Sunnah.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.BEGINNER,
+      durationWeeks: 10,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-sifat-e-bari",
+      title: "Sifat-e-Bari (Divine Attributes)",
+      subtitle: "Allah's names and attributes",
+      description:
+        "A detailed study of Allah's divine names and attributes (Asma wa Sifat), and how classical scholars have understood and explained them.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.INTERMEDIATE,
+      durationWeeks: 14,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-sharah-aqaid",
+      title: "Sharah Aqaid",
+      subtitle: "Classical Aqeedah text",
+      description:
+        "A study of the classical Aqeedah text Sharah Aqaid, a core part of the traditional Dars-e-Nizami curriculum.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.ADVANCED,
+      durationWeeks: 24,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
+    {
+      slug: "aqeedah-comparative",
+      title: "Comparative Aqeedah",
+      subtitle: "Schools of thought and misconceptions",
+      description:
+        "An examination of different schools of thought within the Ummah and a respectful, evidence-based response to common misconceptions.",
+      category: CourseCategory.AQEEDAH,
+      level: CourseLevel.ADVANCED,
+      durationWeeks: 16,
+      teacherSlug: "mufti-muhammad-faizan",
+    },
   ];
 
   for (const c of courseSeeds) {
@@ -413,7 +457,7 @@ async function main() {
   console.log(`Seeded ${blogSeeds.length} blog posts.`);
 
   // -----------------------------
-  // Pricing Plans
+  // Pricing plans
   // -----------------------------
   const pricingPlanSeeds = [
     {
@@ -430,9 +474,7 @@ async function main() {
         "Email support",
       ],
       isHighlighted: false,
-      isPublished: true,
-      displayOrder: 1,
-      stripePriceId: null,
+      displayOrder: 0,
     },
     {
       key: "STANDARD",
@@ -449,9 +491,7 @@ async function main() {
         "Priority WhatsApp support",
       ],
       isHighlighted: true,
-      isPublished: true,
-      displayOrder: 2,
-      stripePriceId: null,
+      displayOrder: 1,
     },
     {
       key: "PREMIUM",
@@ -469,9 +509,7 @@ async function main() {
         "Dedicated academic advisor",
       ],
       isHighlighted: false,
-      isPublished: true,
-      displayOrder: 3,
-      stripePriceId: null,
+      displayOrder: 2,
     },
   ];
 
@@ -490,81 +528,99 @@ async function main() {
   const faqSeeds = [
     {
       placement: "general",
+      displayOrder: 0,
       question: "How do live online classes work?",
-      answer: "Classes are conducted live through video conferencing, with your teacher guiding the session in real time. You can ask questions, get immediate feedback, and interact directly — just like an in-person class, but from anywhere in the world.",
-      displayOrder: 1,
+      answer:
+        "Classes are conducted live through video conferencing, with your teacher guiding the session in real time. You can ask questions, get immediate feedback, and interact directly — just like an in-person class, but from anywhere in the world.",
     },
     {
       placement: "general",
+      displayOrder: 1,
       question: "What age groups do you teach?",
-      answer: "We teach students of all ages, from young children beginning their Quran journey to adults studying Fiqh, Hadith, or Arabic. Class pacing and teaching style are adjusted to the student's age and level.",
-      displayOrder: 2,
+      answer:
+        "We teach students of all ages, from young children beginning their Quran journey to adults studying Fiqh, Hadith, or Arabic. Class pacing and teaching style are adjusted to the student's age and level.",
     },
     {
       placement: "general",
+      displayOrder: 2,
       question: "Do I need any prior knowledge to start?",
-      answer: "No prior knowledge is required for our beginner-level courses. Our teachers assess your current level during the free trial class and build a learning plan suited to where you're starting from.",
-      displayOrder: 3,
+      answer:
+        "No prior knowledge is required for our beginner-level courses. Our teachers assess your current level during the free trial class and build a learning plan suited to where you're starting from.",
     },
     {
       placement: "general",
+      displayOrder: 3,
       question: "What if the class timing doesn't suit my timezone?",
-      answer: "We serve students across many timezones and offer flexible scheduling. During your free trial booking, you can specify your preferred times and we'll match you with a suitable class slot.",
+      answer:
+        "We serve students across many timezones and offer flexible scheduling. During your free trial booking, you can specify your preferred times and we'll match you with a suitable class slot.",
+    },
+    {
+      placement: "general",
       displayOrder: 4,
-    },
-    {
-      placement: "general",
       question: "Can I switch teachers or courses later?",
-      answer: "Yes. If you feel another teacher or course track would suit you better, simply reach out to our support team and we'll help arrange the change.",
-      displayOrder: 5,
+      answer:
+        "Yes. If you feel another teacher or course track would suit you better, simply reach out to our support team and we'll help arrange the change.",
     },
     {
       placement: "general",
+      displayOrder: 5,
       question: "How do I pay, and which currencies are supported?",
-      answer: "We accept payments via Stripe and PayPal, with pricing available in USD, GBP, and EUR. You can manage your subscription and billing history from your student dashboard.",
-      displayOrder: 6,
+      answer:
+        "We accept payments via Stripe and PayPal, with pricing available in USD, GBP, and EUR. You can manage your subscription and billing history from your student dashboard.",
     },
     {
       placement: "pricing",
+      displayOrder: 0,
       question: "Can I change plans later?",
-      answer: "Yes, you can upgrade or downgrade your plan at any time from your student dashboard. Changes take effect at the start of your next billing cycle.",
+      answer:
+        "Yes, you can upgrade or downgrade your plan at any time from your student dashboard. Changes take effect at the start of your next billing cycle.",
+    },
+    {
+      placement: "pricing",
       displayOrder: 1,
-    },
-    {
-      placement: "pricing",
       question: "Is there a long-term contract?",
-      answer: "No. All plans are billed monthly with no long-term commitment. You can cancel anytime from your account settings.",
+      answer:
+        "No. All plans are billed monthly with no long-term commitment. You can cancel anytime from your account settings.",
+    },
+    {
+      placement: "pricing",
       displayOrder: 2,
-    },
-    {
-      placement: "pricing",
       question: "Do you offer family or sibling discounts?",
-      answer: "Yes, families enrolling multiple children can contact our admissions team for custom pricing arrangements.",
-      displayOrder: 3,
+      answer:
+        "Yes, families enrolling multiple children can contact our admissions team for custom pricing arrangements.",
     },
     {
       placement: "pricing",
+      displayOrder: 3,
       question: "What payment methods are accepted?",
       answer: "We accept all major credit and debit cards via Stripe, as well as PayPal, in USD, GBP, or EUR.",
-      displayOrder: 4,
     },
   ];
 
-  const existingFaqCount = await prisma.faq.count();
-  if (existingFaqCount === 0) {
-    await prisma.faq.createMany({
-      data: faqSeeds.map((faq) => ({
-        placement: faq.placement,
-        question: faq.question,
-        answer: faq.answer,
-        isPublished: true,
-        displayOrder: faq.displayOrder,
-      })),
+  for (const faq of faqSeeds) {
+    const existing = await prisma.faq.findFirst({
+      where: { placement: faq.placement, question: faq.question },
     });
-    console.log(`Seeded ${faqSeeds.length} FAQs.`);
-  } else {
-    console.log(`FAQs already exist (${existingFaqCount}), skipping FAQ seed.`);
+    if (!existing) {
+      await prisma.faq.create({ data: faq });
+    }
   }
+  console.log(`Seeded ${faqSeeds.length} FAQs.`);
+
+  // -----------------------------
+  // Site settings (singleton row)
+  // -----------------------------
+  await prisma.siteSettings.upsert({
+    where: { key: "global" },
+    update: {},
+    create: {
+      key: "global",
+      contactEmail: "admissions@hf-nexus.com",
+      metaTitle: "HF Nexus Academy",
+      footerTagline: "Premium online Islamic education for students worldwide.",
+    },
+  });
+  console.log("Seeded site settings.");
 
   console.log("Seeding complete.");
 }

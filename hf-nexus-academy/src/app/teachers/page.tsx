@@ -1,28 +1,15 @@
 import type { Metadata } from "next";
-import { TeacherCard, type TeacherCardData } from "@/components/shared/teacher-card";
-import { getPublishedTeachers } from "@/lib/data/public";
+import { TeacherCard } from "@/components/shared/teacher-card";
+import { TEACHERS } from "@/lib/teachers-data";
 
 export const metadata: Metadata = {
   title: "Our Teachers",
   description:
-    "Meet the qualified scholars teaching at HF Nexus Academy, trained in classical Islamic curricula and bringing years of direct teaching experience.",
+    "Meet the qualified scholars teaching at HF Nexus Academy: Mufti Muhammad Faizan, Mufti Ahsan Ilyas, and Mufti Faizan Tahir.",
   alternates: { canonical: "/teachers" },
 };
 
-export const revalidate = 60;
-
-export default async function TeachersPage() {
-  const dbTeachers = await getPublishedTeachers();
-  const teachers: TeacherCardData[] = dbTeachers.map((t) => ({
-    slug: t.slug,
-    name: t.user.name,
-    title: t.title,
-    bio: t.bio,
-    specializations: t.specializations,
-    experienceYears: t.experienceYears,
-    photoUrl: t.photoUrl,
-  }));
-
+export default function TeachersPage() {
   return (
     <div>
       <section className="bg-navy-950 py-20 lg:py-24">
@@ -41,18 +28,10 @@ export default async function TeachersPage() {
       </section>
 
       <section className="bg-cream-50 py-16 lg:py-20">
-        <div className="container">
-          {teachers.length === 0 ? (
-            <p className="text-center text-ink-500 py-10">
-              No teacher profiles are currently published. Check back soon.
-            </p>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-              {teachers.map((teacher) => (
-                <TeacherCard key={teacher.slug} teacher={teacher} />
-              ))}
-            </div>
-          )}
+        <div className="container grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {TEACHERS.map((teacher) => (
+            <TeacherCard key={teacher.slug} teacher={teacher} />
+          ))}
         </div>
       </section>
     </div>

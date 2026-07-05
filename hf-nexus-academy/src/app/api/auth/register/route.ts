@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(100),
@@ -15,6 +16,9 @@ const registerSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limit = await checkRateLimit(req, "register", { requests: 5, windowSeconds: 60 * 15 });
+  if (limit && !limit.success) return rateLimitResponse();
+
   try {
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);
@@ -35,9 +39,7 @@ export async function POST(req: Request) {
 
     if (existingUser) {
       return NextResponse.json(
-        // Return a generic success message to avoid confirming which emails
-        // are registered on this platform (email enumeration prevention).
-        { message: "If this email is not registered, your account has been created. Please check your inbox to verify." },
+        { error: "An account with this email already exists." },
         { status: 409 }
       );
     }

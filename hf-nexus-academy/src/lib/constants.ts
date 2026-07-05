@@ -39,10 +39,5 @@ export const COURSE_CATEGORY_SLUGS: Record<string, string> = {
   LOGIC: "logic",
 };
 
-// Pricing plans are now managed in the database via the PricingPlan model
-// and the admin portal (Admin → Pricing Plans), so they can be edited without
-// a code change or redeploy. See prisma/seed.ts for the initial seed values
-// and src/lib/data/public.ts for getPublishedPricingPlans().
-
 export const CURRENCIES = ["USD", "GBP", "EUR"] as const;
 export type Currency = (typeof CURRENCIES)[number];

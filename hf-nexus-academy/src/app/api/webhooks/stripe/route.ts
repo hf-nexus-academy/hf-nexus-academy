@@ -35,10 +35,9 @@ export async function POST(req: Request) {
       case "checkout.session.completed": {
         const checkoutSession = event.data.object as Stripe.Checkout.Session;
         const studentId = checkoutSession.metadata?.studentId;
-        const planKey = checkoutSession.metadata?.planKey;
-        const courseId = checkoutSession.metadata?.courseId;
+        const plan = checkoutSession.metadata?.plan;
 
-        if (studentId && (planKey || courseId) && checkoutSession.id) {
+        if (studentId && plan && checkoutSession.id) {
           await prisma.payment.upsert({
             where: { providerRef: checkoutSession.id },
             update: { status: "SUCCEEDED" },
@@ -46,26 +45,13 @@ export async function POST(req: Request) {
               studentId,
               provider: "STRIPE",
               providerRef: checkoutSession.id,
-              planKey: planKey || undefined,
-              courseId: courseId || undefined,
+              planKey: plan,
               billingCycle: "MONTHLY",
               amountCents: checkoutSession.amount_total ?? 0,
               currency: (checkoutSession.currency ?? "usd").toUpperCase(),
               status: "SUCCEEDED",
             },
           });
-
-          // If this payment was for an individual course, also create the
-          // enrollment so the student gets immediate access — subscription
-          // plan payments don't grant a specific course automatically since
-          // plan-based access is enforced at the application level instead.
-          if (courseId) {
-            await prisma.enrollment.upsert({
-              where: { studentId_courseId: { studentId, courseId } },
-              update: { status: "ACTIVE" },
-              create: { studentId, courseId, status: "ACTIVE" },
-            });
-          }
         }
         break;
       }
@@ -90,26 +76,10 @@ export async function POST(req: Request) {
       case "charge.refunded": {
         const charge = event.data.object as Stripe.Charge;
         if (charge.payment_intent) {
-          const payment = await prisma.payment.findFirst({
+          await prisma.payment.updateMany({
             where: { providerRef: String(charge.payment_intent) },
+            data: { status: "REFUNDED" },
           });
-
-          if (payment) {
-            await prisma.payment.update({
-              where: { id: payment.id },
-              data: { status: "REFUNDED" },
-            });
-
-            // Revoke access for refunded individual course purchases. Subscription
-            // plan refunds are intentionally not auto-revoked here since plan
-            // access can span multiple courses and is reviewed manually.
-            if (payment.courseId) {
-              await prisma.enrollment.updateMany({
-                where: { studentId: payment.studentId, courseId: payment.courseId },
-                data: { status: "CANCELLED" },
-              });
-            }
-          }
         }
         break;
       }

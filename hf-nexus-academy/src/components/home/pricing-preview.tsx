@@ -1,17 +1,12 @@
 import Link from "next/link";
-import { PricingCards, type PricingPlanDisplay } from "@/components/shared/pricing-cards";
-import { getPublishedPricingPlans } from "@/lib/data/public";
+import { PricingCards } from "@/components/shared/pricing-cards";
+import { prisma } from "@/lib/prisma";
 
 export async function PricingPreview() {
-  const dbPlans = await getPublishedPricingPlans();
-  const plans: PricingPlanDisplay[] = dbPlans.map((p) => ({
-    key: p.key,
-    name: p.name,
-    description: p.description,
-    priceMonthlyCents: { USD: p.priceUSDCents, GBP: p.priceGBPCents, EUR: p.priceEURCents },
-    features: p.features,
-    highlighted: p.isHighlighted,
-  }));
+  const plans = await prisma.pricingPlan.findMany({
+    where: { isPublished: true },
+    orderBy: { displayOrder: "asc" },
+  });
 
   return (
     <section className="bg-cream-100 py-20 lg:py-28">

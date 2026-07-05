@@ -4,7 +4,6 @@ import { Hero } from "@/components/home/hero";
 import { TrustBar } from "@/components/home/trust-bar";
 import { WhyHfNexus } from "@/components/home/why-hf-nexus";
 import { CoursesOverview } from "@/components/home/courses-overview";
-import { FeaturedCourses } from "@/components/home/featured-courses";
 import { MeetScholars } from "@/components/home/meet-scholars";
 import { StudentJourney } from "@/components/home/student-journey";
 import { Testimonials } from "@/components/home/testimonials";
@@ -20,8 +19,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/" },
 };
 
-export const revalidate = 60;
-
 export default function HomePage() {
   return (
     <>
@@ -30,7 +27,6 @@ export default function HomePage() {
       <TrustBar />
       <WhyHfNexus />
       <CoursesOverview />
-      <FeaturedCourses />
       <MeetScholars />
       <StudentJourney />
       <Testimonials />

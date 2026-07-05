@@ -84,10 +84,9 @@ export async function POST(req: Request) {
       case "PAYMENT.CAPTURE.COMPLETED": {
         const customId = event.resource.custom_id;
         if (customId) {
-          const { studentId, planKey, courseId } = JSON.parse(customId) as {
+          const { studentId, plan } = JSON.parse(customId) as {
             studentId: string;
-            planKey?: string;
-            courseId?: string;
+            plan: string;
           };
           const amountCents = Math.round(parseFloat(event.resource.amount?.value ?? "0") * 100);
 
@@ -98,44 +97,22 @@ export async function POST(req: Request) {
               studentId,
               provider: "PAYPAL",
               providerRef: event.resource.id,
-              planKey: planKey || undefined,
-              courseId: courseId || undefined,
+              planKey: plan,
               billingCycle: "MONTHLY",
               amountCents,
               currency: event.resource.amount?.currency_code ?? "USD",
               status: "SUCCEEDED",
             },
           });
-
-          if (courseId) {
-            await prisma.enrollment.upsert({
-              where: { studentId_courseId: { studentId, courseId } },
-              update: { status: "ACTIVE" },
-              create: { studentId, courseId, status: "ACTIVE" },
-            });
-          }
         }
         break;
       }
 
       case "PAYMENT.CAPTURE.REFUNDED": {
-        const payment = await prisma.payment.findFirst({
+        await prisma.payment.updateMany({
           where: { providerRef: event.resource.id },
+          data: { status: "REFUNDED" },
         });
-
-        if (payment) {
-          await prisma.payment.update({
-            where: { id: payment.id },
-            data: { status: "REFUNDED" },
-          });
-
-          if (payment.courseId) {
-            await prisma.enrollment.updateMany({
-              where: { studentId: payment.studentId, courseId: payment.courseId },
-              data: { status: "CANCELLED" },
-            });
-          }
-        }
         break;
       }
 

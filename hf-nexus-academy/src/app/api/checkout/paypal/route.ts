@@ -6,20 +6,15 @@ import { prisma } from "@/lib/prisma";
 import { getPayPalClient, paypal } from "@/lib/paypal";
 import { CURRENCIES } from "@/lib/constants";
 
-const schema = z
-  .object({
-    planKey: z.string().min(1).optional(),
-    courseId: z.string().min(1).optional(),
-    currency: z.enum(CURRENCIES).default("USD"),
-  })
-  .refine((data) => !!data.planKey !== !!data.courseId, {
-    message: "Provide exactly one of planKey or courseId.",
-  });
+const schema = z.object({
+  plan: z.string().min(1),
+  currency: z.enum(CURRENCIES).default("USD"),
+});
 
 export async function POST(req: Request) {
   const session = await auth();
   if (!session?.user || session.user.role !== "STUDENT") {
-    return NextResponse.json({ error: "You must be logged in as a student to checkout." }, { status: 401 });
+    return NextResponse.json({ error: "You must be logged in as a student to subscribe." }, { status: 401 });
   }
 
   try {
@@ -34,40 +29,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student profile not found." }, { status: 404 });
     }
 
-    let amountCents: number;
-    let description: string;
-    let customId: string;
-    let chargeCurrency: (typeof CURRENCIES)[number];
-
-    if (parsed.data.planKey) {
-      const plan = await prisma.pricingPlan.findUnique({ where: { key: parsed.data.planKey } });
-      if (!plan || !plan.isPublished) {
-        return NextResponse.json({ error: "This plan is not available." }, { status: 404 });
-      }
-      const priceField = `price${parsed.data.currency}Cents` as "priceUSDCents" | "priceGBPCents" | "priceEURCents";
-      amountCents = plan[priceField];
-      description = `HF Nexus Academy — ${plan.name} Plan (Monthly)`;
-      customId = JSON.stringify({ studentId: student.id, planKey: plan.key });
-      chargeCurrency = parsed.data.currency;
-    } else {
-      const course = await prisma.course.findUnique({ where: { id: parsed.data.courseId } });
-      if (!course || !course.isPublished || !course.enrollmentOpen) {
-        return NextResponse.json({ error: "This course is not available for enrollment." }, { status: 404 });
-      }
-      if (!course.priceMonthlyCents) {
-        return NextResponse.json({ error: "This course does not have a price configured." }, { status: 503 });
-      }
-      // Courses are priced in a single fixed currency (course.priceCurrency).
-      // The course's own currency is always used for the actual charge, regardless
-      // of what currency the client requested — using the client-requested currency
-      // here would silently charge the wrong amount (e.g. treating a $69 USD price
-      // as £69 GBP), which is a real overcharge/undercharge risk.
-      amountCents = course.priceMonthlyCents;
-      description = `HF Nexus Academy — ${course.title}`;
-      customId = JSON.stringify({ studentId: student.id, courseId: course.id });
-      chargeCurrency = (course.priceCurrency as (typeof CURRENCIES)[number] | null) ?? "USD";
+    const plan = await prisma.pricingPlan.findUnique({ where: { key: parsed.data.plan } });
+    if (!plan || !plan.isPublished) {
+      return NextResponse.json({ error: "This plan is not available." }, { status: 404 });
     }
 
+    const amountCents =
+      parsed.data.currency === "USD"
+        ? plan.priceUSDCents
+        : parsed.data.currency === "GBP"
+          ? plan.priceGBPCents
+          : plan.priceEURCents;
     const amountValue = (amountCents / 100).toFixed(2);
 
     const client = getPayPalClient();
@@ -76,9 +48,9 @@ export async function POST(req: Request) {
       intent: "CAPTURE",
       purchase_units: [
         {
-          amount: { currency_code: chargeCurrency, value: amountValue },
-          description,
-          custom_id: customId,
+          amount: { currency_code: parsed.data.currency, value: amountValue },
+          description: `HF Nexus Academy — ${plan.name} Plan (Monthly)`,
+          custom_id: JSON.stringify({ studentId: student.id, plan: plan.key }),
         },
       ],
     });
@@ -88,9 +60,7 @@ export async function POST(req: Request) {
     return NextResponse.json({ orderId: order.result.id });
   } catch (error) {
     console.error("PayPal create order error:", error);
-    return NextResponse.json(
-      { error: "We couldn't start checkout right now. Please try again or contact support." },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Something went wrong.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

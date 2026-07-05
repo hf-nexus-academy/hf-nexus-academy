@@ -1,21 +1,8 @@
 import Link from "next/link";
-import { TeacherCard, type TeacherCardData } from "@/components/shared/teacher-card";
-import { getPublishedTeachers } from "@/lib/data/public";
+import { TeacherCard } from "@/components/shared/teacher-card";
+import { TEACHERS } from "@/lib/teachers-data";
 
-export async function MeetScholars() {
-  const dbTeachers = await getPublishedTeachers();
-  const teachers: TeacherCardData[] = dbTeachers.slice(0, 3).map((t) => ({
-    slug: t.slug,
-    name: t.user.name,
-    title: t.title,
-    bio: t.bio,
-    specializations: t.specializations,
-    experienceYears: t.experienceYears,
-    photoUrl: t.photoUrl,
-  }));
-
-  if (teachers.length === 0) return null;
-
+export function MeetScholars() {
   return (
     <section className="bg-cream-100 py-20 lg:py-28">
       <div className="container">
@@ -34,7 +21,7 @@ export async function MeetScholars() {
         </div>
 
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {teachers.map((teacher) => (
+          {TEACHERS.map((teacher) => (
             <TeacherCard key={teacher.slug} teacher={teacher} />
           ))}
         </div>

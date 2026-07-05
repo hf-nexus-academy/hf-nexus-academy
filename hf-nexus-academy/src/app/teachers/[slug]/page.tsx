@@ -6,31 +6,19 @@ import { GraduationCap, ArrowRight } from "lucide-react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { prisma } from "@/lib/prisma";
-import { getPublishedTeacherBySlug } from "@/lib/data/public";
+import { TEACHERS } from "@/lib/teachers-data";
 import { getInitials } from "@/lib/utils";
-import { COURSE_CATEGORY_SLUGS } from "@/lib/constants";
 
-export const revalidate = 60;
-
-// Pre-renders known teacher slugs at build time; new teachers added later via
-// the admin portal are still served correctly on first request and then
-// cached per the `revalidate` setting above (Next.js falls back to on-demand
-// rendering for slugs not in this list, since dynamicParams defaults to true).
-export async function generateStaticParams() {
-  const teachers = await prisma.teacher.findMany({
-    where: { isPublished: true },
-    select: { slug: true },
-  });
-  return teachers.map((t) => ({ slug: t.slug }));
+export function generateStaticParams() {
+  return TEACHERS.map((t) => ({ slug: t.slug }));
 }
 
 export async function generateMetadata({ params }: { params: Promise<{ slug: string }> }): Promise<Metadata> {
   const { slug } = await params;
-  const teacher = await getPublishedTeacherBySlug(slug);
+  const teacher = TEACHERS.find((t) => t.slug === slug);
   if (!teacher) return {};
   return {
-    title: teacher.user.name,
+    title: teacher.name,
     description: teacher.bio,
     alternates: { canonical: `/teachers/${teacher.slug}` },
   };
@@ -38,15 +26,13 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function TeacherDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
-  const teacher = await getPublishedTeacherBySlug(slug);
+  const teacher = TEACHERS.find((t) => t.slug === slug);
   if (!teacher) notFound();
-
-  const teacherName = teacher.user.name;
 
   const personSchema = {
     "@context": "https://schema.org",
     "@type": "Person",
-    name: teacherName,
+    name: teacher.name,
     jobTitle: "Islamic Studies Teacher",
     description: teacher.bio,
     worksFor: {
@@ -60,11 +46,11 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
       <section className="bg-navy-950 py-16 lg:py-20">
         <div className="container flex flex-col sm:flex-row items-center sm:items-start gap-8">
           <Avatar className="h-28 w-28 border-4 border-gold-500/30">
-            {teacher.photoUrl && <AvatarImage src={teacher.photoUrl} alt={teacherName} />}
-            <AvatarFallback className="text-3xl">{getInitials(teacherName)}</AvatarFallback>
+            {teacher.photoUrl && <AvatarImage src={teacher.photoUrl} alt={teacher.name} />}
+            <AvatarFallback className="text-3xl">{getInitials(teacher.name)}</AvatarFallback>
           </Avatar>
           <div className="text-center sm:text-left">
-            <h1 className="font-display text-3xl lg:text-4xl text-cream-50">{teacherName}</h1>
+            <h1 className="font-display text-3xl lg:text-4xl text-cream-50">{teacher.name}</h1>
             {teacher.experienceYears && (
               <p className="flex items-center justify-center sm:justify-start gap-1.5 text-sm text-cream-50/60 mt-2">
                 <GraduationCap className="h-4 w-4 text-gold-500" />
@@ -85,33 +71,31 @@ export default async function TeacherDetailPage({ params }: { params: Promise<{ 
       <section className="bg-cream-50 py-16 lg:py-20">
         <div className="container max-w-3xl">
           <h2 className="font-display text-2xl text-navy-950 mb-4">Biography</h2>
-          <p className="text-ink-500 leading-relaxed">{teacher.bio}</p>
+          <p className="text-ink-500 leading-relaxed">{teacher.longBio}</p>
         </div>
       </section>
 
-      {teacher.courses.length > 0 && (
-        <section className="bg-cream-100 py-16 lg:py-20">
-          <div className="container max-w-3xl">
-            <h2 className="font-display text-2xl text-navy-950 mb-6">Courses Taught</h2>
-            <div className="grid sm:grid-cols-2 gap-4">
-              {teacher.courses.map((course) => (
-                <Link
-                  key={course.slug}
-                  href={`/courses/${COURSE_CATEGORY_SLUGS[course.category] ?? course.category.toLowerCase()}`}
-                  className="rounded-md border border-ink-300/15 bg-white px-5 py-4 text-sm font-medium text-navy-950 hover:border-gold-500/40 hover:shadow-sm transition-all"
-                >
-                  {course.title}
-                </Link>
-              ))}
-            </div>
+      <section className="bg-cream-100 py-16 lg:py-20">
+        <div className="container max-w-3xl">
+          <h2 className="font-display text-2xl text-navy-950 mb-6">Courses Taught</h2>
+          <div className="grid sm:grid-cols-2 gap-4">
+            {teacher.coursesTaught.map((course) => (
+              <Link
+                key={course.slug}
+                href={`/courses/${course.category}`}
+                className="rounded-md border border-ink-300/15 bg-white px-5 py-4 text-sm font-medium text-navy-950 hover:border-gold-500/40 hover:shadow-sm transition-all"
+              >
+                {course.title}
+              </Link>
+            ))}
           </div>
-        </section>
-      )}
+        </div>
+      </section>
 
       <section className="bg-navy-950 py-16">
         <div className="container text-center">
           <h2 className="font-display text-2xl lg:text-3xl text-cream-50 mb-6">
-            Book a free trial class with {teacherName}
+            Book a free trial class with {teacher.name}
           </h2>
           <Button asChild size="lg" variant="gold">
             <Link href="/free-trial">

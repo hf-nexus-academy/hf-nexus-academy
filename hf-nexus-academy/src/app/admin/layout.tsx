@@ -36,7 +36,7 @@ const ADMIN_NAV: PortalNavItem[] = [
   { label: "Blog", href: "/admin/blog", icon: Newspaper },
   { label: "Announcements", href: "/admin/announcements", icon: Megaphone },
   { label: "Analytics", href: "/admin/analytics", icon: BarChart3 },
-  { label: "Site Settings", href: "/admin/settings", icon: Settings },
+  { label: "Settings", href: "/admin/settings", icon: Settings },
 ];
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {

@@ -18,6 +18,7 @@ export default async function AdminEditBlogPostPage({ params }: { params: Promis
       <PortalSectionHeader title="Edit Blog Post" description={`Slug: /blog/${post.slug}`} />
       <EditBlogPostForm
         postId={post.id}
+        initialCoverImageUrl={post.coverImageUrl}
         defaultValues={{
           title: post.title,
           excerpt: post.excerpt,

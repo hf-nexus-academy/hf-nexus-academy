@@ -1,39 +1,16 @@
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
-import { CourseCard, type CourseCardData } from "@/components/shared/course-card";
-import { TeacherCard, type TeacherCardData } from "@/components/shared/teacher-card";
+import { CourseCard } from "@/components/shared/course-card";
+import { TeacherCard } from "@/components/shared/teacher-card";
 import { Button } from "@/components/ui/button";
-import { getPublishedCoursesByCategory } from "@/lib/data/public";
-import { CATEGORY_META } from "@/lib/courses-data";
+import { COURSES_BY_CATEGORY, CATEGORY_META } from "@/lib/courses-data";
+import { TEACHERS } from "@/lib/teachers-data";
 
-export async function CourseCategoryPage({ category }: { category: string }) {
-  const dbCourses = await getPublishedCoursesByCategory(category);
+export function CourseCategoryPage({ category }: { category: string }) {
+  const courses = COURSES_BY_CATEGORY[category] ?? [];
   const meta = CATEGORY_META[category];
-
-  const courses: CourseCardData[] = dbCourses.map((c) => ({
-    slug: c.slug,
-    title: c.title,
-    subtitle: c.subtitle ?? "",
-    level: c.level,
-    durationWeeks: c.durationWeeks ?? 0,
-    priceMonthlyUSD: c.priceMonthlyCents ? Math.round(c.priceMonthlyCents / 100) : undefined,
-  }));
-
-  // Teacher shown in "Taught By" is whoever teaches the first listed course in
-  // this category, so it reflects real admin-assigned teachers rather than a
-  // hardcoded mapping. If no course has a teacher assigned yet, the section
-  // is simply omitted below.
-  const firstTeacher = dbCourses.find((c) => c.teacher)?.teacher;
-  const teacher: TeacherCardData | null = firstTeacher
-    ? {
-        slug: firstTeacher.slug,
-        name: firstTeacher.user.name,
-        title: firstTeacher.title,
-        bio: firstTeacher.bio,
-        specializations: firstTeacher.specializations,
-      }
-    : null;
+  const teacher = TEACHERS.find((t) => t.slug === meta.teacherSlug);
 
   const courseListSchema = {
     "@context": "https://schema.org",
@@ -84,17 +61,11 @@ export async function CourseCategoryPage({ category }: { category: string }) {
 
       <section className="bg-cream-50 py-16 lg:py-20">
         <div className="container">
-          {courses.length === 0 ? (
-            <p className="text-center text-ink-500 py-10">
-              No courses are currently published in this category. Check back soon.
-            </p>
-          ) : (
-            <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
-              {courses.map((course) => (
-                <CourseCard key={course.slug} course={course} />
-              ))}
-            </div>
-          )}
+          <div className="grid sm:grid-cols-2 lg:grid-cols-2 gap-6">
+            {courses.map((course) => (
+              <CourseCard key={course.slug} course={course} />
+            ))}
+          </div>
         </div>
       </section>
 

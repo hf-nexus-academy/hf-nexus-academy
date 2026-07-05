@@ -4,16 +4,16 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 
-const updateSchema = z.object({
-  name: z.string().min(1).optional(),
-  description: z.string().min(1).optional(),
-  priceUSDCents: z.number().int().min(0).optional(),
-  priceGBPCents: z.number().int().min(0).optional(),
-  priceEURCents: z.number().int().min(0).optional(),
-  features: z.array(z.string()).optional(),
+const schema = z.object({
+  name: z.string().min(2).max(100).optional(),
+  description: z.string().min(2).max(500).optional(),
+  priceUSDCents: z.coerce.number().int().min(0).optional(),
+  priceGBPCents: z.coerce.number().int().min(0).optional(),
+  priceEURCents: z.coerce.number().int().min(0).optional(),
+  features: z.array(z.string().min(1)).optional(),
   isHighlighted: z.boolean().optional(),
   isPublished: z.boolean().optional(),
-  displayOrder: z.number().int().optional(),
+  displayOrder: z.coerce.number().int().optional(),
   stripePriceId: z.string().nullable().optional(),
 });
 
@@ -26,16 +26,14 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
   try {
     const body = await req.json();
-    const parsed = updateSchema.safeParse(body);
+    const parsed = schema.safeParse(body);
     if (!parsed.success) {
-      return NextResponse.json({ error: "Invalid input." }, { status: 400 });
+      return NextResponse.json({ error: "Invalid input.", details: parsed.error.flatten() }, { status: 400 });
     }
 
-    const plan = await prisma.pricingPlan.findUnique({ where: { id } });
-    if (!plan) return NextResponse.json({ error: "Plan not found." }, { status: 404 });
+    await prisma.pricingPlan.update({ where: { id }, data: parsed.data });
 
-    const updated = await prisma.pricingPlan.update({ where: { id }, data: parsed.data });
-    return NextResponse.json({ plan: updated });
+    return NextResponse.json({ message: "Pricing plan updated." });
   } catch (error) {
     console.error("Admin update pricing plan error:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });
@@ -51,18 +49,20 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
   try {
     const plan = await prisma.pricingPlan.findUnique({ where: { id } });
-    if (!plan) return NextResponse.json({ error: "Plan not found." }, { status: 404 });
+    if (!plan) {
+      return NextResponse.json({ error: "Pricing plan not found." }, { status: 404 });
+    }
 
     const paymentCount = await prisma.payment.count({ where: { planKey: plan.key } });
     if (paymentCount > 0) {
       return NextResponse.json(
-        { error: `Cannot delete — ${paymentCount} payment(s) reference this plan. Unpublish it instead.` },
+        { error: "This plan has existing payments and can't be deleted. Unpublish it instead." },
         { status: 409 }
       );
     }
 
     await prisma.pricingPlan.delete({ where: { id } });
-    return NextResponse.json({ message: "Plan deleted." });
+    return NextResponse.json({ message: "Pricing plan deleted." });
   } catch (error) {
     console.error("Admin delete pricing plan error:", error);
     return NextResponse.json({ error: "Something went wrong." }, { status: 500 });

@@ -4,10 +4,14 @@ import { nanoid } from "nanoid";
 
 import { prisma } from "@/lib/prisma";
 import { sendPasswordResetEmail } from "@/lib/email";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const schema = z.object({ email: z.string().email() });
 
 export async function POST(req: Request) {
+  const limit = await checkRateLimit(req, "forgot-password", { requests: 5, windowSeconds: 60 * 15 });
+  if (limit && !limit.success) return rateLimitResponse();
+
   try {
     const body = await req.json();
     const parsed = schema.safeParse(body);

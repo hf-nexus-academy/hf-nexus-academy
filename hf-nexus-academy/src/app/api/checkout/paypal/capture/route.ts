@@ -40,11 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payment metadata missing." }, { status: 500 });
     }
 
-    const { studentId, planKey, courseId } = JSON.parse(customId) as {
-      studentId: string;
-      planKey?: string;
-      courseId?: string;
-    };
+    const { studentId, plan } = JSON.parse(customId) as { studentId: string; plan: string };
 
     const amountCents = Math.round(parseFloat(captureDetails?.amount?.value ?? "0") * 100);
     const currency = captureDetails?.amount?.currency_code ?? "USD";
@@ -56,8 +52,7 @@ export async function POST(req: Request) {
         studentId,
         provider: "PAYPAL",
         providerRef: result.id!,
-        planKey: planKey || undefined,
-        courseId: courseId || undefined,
+        planKey: plan,
         billingCycle: "MONTHLY",
         amountCents,
         currency,
@@ -65,20 +60,10 @@ export async function POST(req: Request) {
       },
     });
 
-    if (courseId) {
-      await prisma.enrollment.upsert({
-        where: { studentId_courseId: { studentId, courseId } },
-        update: { status: "ACTIVE" },
-        create: { studentId, courseId, status: "ACTIVE" },
-      });
-    }
-
     return NextResponse.json({ message: "Payment successful." });
   } catch (error) {
     console.error("PayPal capture error:", error);
-    return NextResponse.json(
-      { error: "We couldn't confirm your payment right now. Please contact support with your order details." },
-      { status: 500 }
-    );
+    const message = error instanceof Error ? error.message : "Something went wrong.";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

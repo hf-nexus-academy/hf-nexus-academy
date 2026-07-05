@@ -17,19 +17,14 @@ import {
 } from "@/components/ui/dialog";
 import type { CURRENCIES } from "@/lib/constants";
 
-type CheckoutTarget = { planKey: string; courseId?: never } | { planKey?: never; courseId: string };
-
 export function CheckoutButton({
+  planKey,
   currency,
   highlighted,
-  label = "Get Started",
-  loginCallbackUrl = "/pricing",
-  ...target
-}: CheckoutTarget & {
+}: {
+  planKey: string;
   currency: (typeof CURRENCIES)[number];
   highlighted?: boolean;
-  label?: string;
-  loginCallbackUrl?: string;
 }) {
   const router = useRouter();
   const { data: session, status } = useSession();
@@ -38,11 +33,11 @@ export function CheckoutButton({
 
   function handleGetStarted() {
     if (status !== "authenticated") {
-      router.push(`/login?callbackUrl=${encodeURIComponent(loginCallbackUrl)}`);
+      router.push(`/login?callbackUrl=/pricing`);
       return;
     }
     if (session?.user.role !== "STUDENT") {
-      toast.error("Only student accounts can check out.");
+      toast.error("Only student accounts can subscribe to a plan.");
       return;
     }
     setOpen(true);
@@ -54,7 +49,7 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...target, currency }),
+        body: JSON.stringify({ plan: planKey, currency }),
       });
       const data = await res.json();
 
@@ -77,7 +72,7 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ ...target, currency }),
+        body: JSON.stringify({ plan: planKey, currency }),
       });
       const data = await res.json();
 
@@ -101,13 +96,13 @@ export function CheckoutButton({
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button onClick={handleGetStarted} className="w-full" variant={highlighted ? "gold" : "primary"}>
-          {label}
+          Get Started
         </Button>
       </DialogTrigger>
       <DialogContent>
         <DialogHeader>
           <DialogTitle>Choose a payment method</DialogTitle>
-          <DialogDescription>Select how you&apos;d like to pay.</DialogDescription>
+          <DialogDescription>Select how you&apos;d like to pay for your subscription.</DialogDescription>
         </DialogHeader>
 
         <div className="flex flex-col gap-3">

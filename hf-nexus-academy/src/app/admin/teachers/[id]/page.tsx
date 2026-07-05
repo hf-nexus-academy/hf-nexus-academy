@@ -2,11 +2,11 @@ import { notFound } from "next/navigation";
 import { BookOpen } from "lucide-react";
 
 import { getTeacherFullDetail } from "@/lib/data/admin";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PublishToggle } from "@/components/portal/admin/publish-toggle";
 import { UserStatusToggle } from "@/components/portal/admin/user-status-toggle";
-import { TeacherEditForm } from "@/components/portal/admin/teacher-edit-form";
+import { EditTeacherForm } from "@/components/portal/admin/edit-teacher-form";
 import { getInitials } from "@/lib/utils";
 
 export async function generateMetadata() {
@@ -32,34 +32,37 @@ export default async function AdminTeacherDetailPage({ params }: { params: Promi
           </div>
         </div>
         <div className="flex flex-col items-end gap-2">
-          <UserStatusToggle userId={teacher.user.id} initialActive={teacher.user.isActive}
-            endpoint={`/api/admin/teachers/${teacher.id}`} />
-          <PublishToggle initialPublished={teacher.isPublished}
-            endpoint={`/api/admin/teachers/${teacher.id}`} field="isPublished" label="Published on site" />
+          <UserStatusToggle
+            userId={teacher.user.id}
+            initialActive={teacher.user.isActive}
+            endpoint={`/api/admin/teachers/${teacher.id}`}
+          />
+          <PublishToggle
+            initialPublished={teacher.isPublished}
+            endpoint={`/api/admin/teachers/${teacher.id}`}
+            field="isPublished"
+            label="Published on site"
+          />
         </div>
       </div>
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">
-        <h2 className="font-display text-base text-navy-950 mb-4 pb-3 border-b border-ink-300/10">
-          Edit Teacher Profile
-        </h2>
-        <TeacherEditForm
+        <h2 className="font-display text-base text-navy-950 mb-4">Public Profile</h2>
+        <EditTeacherForm
           teacherId={teacher.id}
+          initialPhotoUrl={teacher.photoUrl}
           defaultValues={{
-            name: teacher.user.name,
             title: teacher.title ?? "",
             bio: teacher.bio,
             specializations: teacher.specializations,
             experienceYears: teacher.experienceYears,
-            photoUrl: teacher.photoUrl,
-            slug: teacher.slug,
           }}
         />
       </div>
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6">
         <h2 className="font-display text-base text-navy-950 flex items-center gap-2 mb-4">
-          <BookOpen className="h-4 w-4 text-gold-600" /> Courses Taught ({teacher.courses.length})
+          <BookOpen className="h-4 w-4 text-gold-600" /> Courses Taught
         </h2>
         {teacher.courses.length === 0 ? (
           <p className="text-sm text-ink-500">No courses assigned yet.</p>

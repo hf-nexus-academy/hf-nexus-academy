@@ -21,7 +21,7 @@ const LEVEL_LABELS: Record<string, string> = {
 export function CourseCard({ course }: { course: CourseCardData }) {
   return (
     <Link
-      href={`/courses/${course.slug}/enroll`}
+      href={`/free-trial?course=${course.slug}`}
       className="group flex flex-col rounded-lg border border-ink-300/15 bg-white p-6 hover:border-gold-500/40 hover:shadow-md transition-all"
     >
       <div className="flex items-center justify-between mb-3">

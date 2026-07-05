@@ -23,6 +23,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
 import { COURSE_CATEGORY_LABELS } from "@/lib/constants";
+import { ImageUpload } from "@/components/portal/admin/image-upload";
 
 const schema = z.object({
   title: z.string().min(2, "Enter a title."),
@@ -39,6 +40,7 @@ export function CreateBlogPostDialog() {
   const router = useRouter();
   const [open, setOpen] = React.useState(false);
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [coverImageUrl, setCoverImageUrl] = React.useState("");
 
   const {
     register,
@@ -54,7 +56,7 @@ export function CreateBlogPostDialog() {
       const res = await fetch("/api/admin/blog", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, coverImageUrl: coverImageUrl || null }),
       });
       const data = await res.json();
 
@@ -66,6 +68,7 @@ export function CreateBlogPostDialog() {
       toast.success("Blog post created.");
       setOpen(false);
       reset();
+      setCoverImageUrl("");
       router.refresh();
     } catch {
       toast.error("Something went wrong.");
@@ -88,6 +91,8 @@ export function CreateBlogPostDialog() {
         </DialogHeader>
 
         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-h-[70vh] overflow-y-auto pr-1">
+          <ImageUpload label="Cover Image" folder="blog" value={coverImageUrl} onChange={setCoverImageUrl} />
+
           <div className="flex flex-col gap-1.5">
             <Label htmlFor="title">Title</Label>
             <Input id="title" error={!!errors.title} {...register("title")} />

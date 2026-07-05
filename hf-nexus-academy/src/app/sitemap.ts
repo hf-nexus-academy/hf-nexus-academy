@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
 import { prisma } from "@/lib/prisma";
+import { TEACHERS } from "@/lib/teachers-data";
 import { CATEGORY_META } from "@/lib/courses-data";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://hf-nexus.com";
@@ -26,37 +27,11 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     priority: 0.85,
   }));
 
-  let teacherPages: MetadataRoute.Sitemap = [];
-  try {
-    const teachers = await prisma.teacher.findMany({
-      where: { isPublished: true },
-      select: { slug: true, updatedAt: true },
-    });
-    teacherPages = teachers.map((teacher) => ({
-      url: `${APP_URL}/teachers/${teacher.slug}`,
-      lastModified: teacher.updatedAt,
-      changeFrequency: "monthly" as const,
-      priority: 0.6,
-    }));
-  } catch (error) {
-    console.error("Failed to load teachers for sitemap:", error);
-  }
-
-  let coursePages: MetadataRoute.Sitemap = [];
-  try {
-    const courses = await prisma.course.findMany({
-      where: { isPublished: true, priceMonthlyCents: { not: null } },
-      select: { slug: true, updatedAt: true },
-    });
-    coursePages = courses.map((course) => ({
-      url: `${APP_URL}/courses/${course.slug}/enroll`,
-      lastModified: course.updatedAt,
-      changeFrequency: "weekly" as const,
-      priority: 0.75,
-    }));
-  } catch (error) {
-    console.error("Failed to load courses for sitemap:", error);
-  }
+  const teacherPages: MetadataRoute.Sitemap = TEACHERS.map((teacher) => ({
+    url: `${APP_URL}/teachers/${teacher.slug}`,
+    changeFrequency: "monthly",
+    priority: 0.6,
+  }));
 
   let blogPages: MetadataRoute.Sitemap = [];
   try {
@@ -74,5 +49,5 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("Failed to load blog posts for sitemap:", error);
   }
 
-  return [...staticPages, ...categoryPages, ...teacherPages, ...coursePages, ...blogPages];
+  return [...staticPages, ...categoryPages, ...teacherPages, ...blogPages];
 }

@@ -9,6 +9,7 @@ const schema = z.object({
   excerpt: z.string().min(10).max(500).optional(),
   content: z.string().min(20).optional(),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).optional(),
+  coverImageUrl: z.string().url().nullable().optional().or(z.literal("")),
 });
 
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -36,6 +37,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
       where: { id },
       data: {
         ...parsed.data,
+        coverImageUrl:
+          parsed.data.coverImageUrl !== undefined ? parsed.data.coverImageUrl || null : undefined,
         publishedAt: becomingPublished ? new Date() : undefined,
       },
     });

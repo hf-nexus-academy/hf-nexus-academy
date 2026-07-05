@@ -1,12 +1,12 @@
 import { notFound } from "next/navigation";
 
 import { prisma } from "@/lib/prisma";
+import { getAllTeachersForSelect } from "@/lib/data/admin";
 import { PortalSectionHeader } from "@/components/portal/shared/section-header";
 import { PublishToggle } from "@/components/portal/admin/publish-toggle";
-import { CoursePricingForm } from "@/components/portal/admin/course-pricing-form";
+import { EditCourseForm } from "@/components/portal/admin/edit-course-form";
 import { Badge } from "@/components/ui/badge";
 import { COURSE_CATEGORY_LABELS } from "@/lib/constants";
-import { formatCurrency } from "@/lib/utils";
 
 export async function generateMetadata() {
   return { title: "Course Detail" };
@@ -29,57 +29,39 @@ export default async function AdminCourseDetailPage({ params }: { params: Promis
   const course = await getCourseDetail(id);
   if (!course) notFound();
 
+  await getAllTeachersForSelect();
+
   return (
     <div>
       <PortalSectionHeader
         title={course.title}
         description={`${COURSE_CATEGORY_LABELS[course.category]} · ${course.level}`}
         action={
-          <div className="flex flex-col items-end gap-2">
-            <PublishToggle
-              initialPublished={course.isPublished}
-              endpoint={`/api/admin/courses/${course.id}`}
-              field="isPublished"
-              label="Published"
-            />
-            <PublishToggle
-              initialPublished={course.enrollmentOpen}
-              endpoint={`/api/admin/courses/${course.id}`}
-              field="enrollmentOpen"
-              label="Enrollment Open"
-            />
-            <PublishToggle
-              initialPublished={course.isFeatured}
-              endpoint={`/api/admin/courses/${course.id}`}
-              field="isFeatured"
-              label="Featured"
-            />
-          </div>
+          <PublishToggle
+            initialPublished={course.isPublished}
+            endpoint={`/api/admin/courses/${course.id}`}
+            field="isPublished"
+            label="Published"
+          />
         }
       />
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">
-        <p className="text-sm text-ink-500 leading-relaxed mb-4">{course.description}</p>
-        <p className="text-sm text-navy-950 mb-1">
-          <span className="font-medium">Teacher:</span> {course.teacher?.user.name ?? "Unassigned"}
-        </p>
-        <p className="text-sm text-navy-950">
-          <span className="font-medium">Individual price:</span>{" "}
-          {course.priceMonthlyCents
-            ? `${formatCurrency(course.priceMonthlyCents, course.priceCurrency ?? "USD")} / month`
-            : "Not set (subscription plans only)"}
-        </p>
-      </div>
-
-      <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">
-        <h2 className="font-display text-base text-navy-950 mb-4">Individual Pricing</h2>
-        <CoursePricingForm
+        <h2 className="font-display text-base text-navy-950 mb-4">Course Content</h2>
+        <EditCourseForm
           courseId={course.id}
           defaultValues={{
-            priceMonthlyCents: course.priceMonthlyCents,
-            priceCurrency: course.priceCurrency ?? "USD",
+            title: course.title,
+            subtitle: course.subtitle ?? "",
+            description: course.description,
           }}
+          initialCoverImageUrl={course.coverImageUrl}
+          initialIsFeatured={course.isFeatured}
+          initialEnrollmentOpen={course.enrollmentOpen}
         />
+        <p className="text-sm text-navy-950 mt-6 pt-4 border-t border-ink-300/10">
+          <span className="font-medium">Teacher:</span> {course.teacher?.user.name ?? "Unassigned"}
+        </p>
       </div>
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">

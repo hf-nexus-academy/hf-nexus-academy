@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/courses/logic" },
 };
 
-export const revalidate = 60;
-
 export default function LogicCoursesPage() {
   return <CourseCategoryPage category="logic" />;
 }

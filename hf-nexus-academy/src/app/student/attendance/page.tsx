@@ -38,8 +38,8 @@ export default async function StudentAttendancePage() {
           description="Once your classes begin, your attendance will be tracked here by your teacher."
         />
       ) : (
-        <div className="rounded-lg border border-ink-300/15 bg-white overflow-x-auto">
-          <table className="w-full text-sm min-w-[560px]">
+        <div className="rounded-lg border border-ink-300/15 bg-white overflow-hidden">
+          <table className="w-full text-sm">
             <thead className="bg-cream-100 text-ink-500 text-xs uppercase tracking-wide">
               <tr>
                 <th className="text-left px-5 py-3 font-medium">Date</th>

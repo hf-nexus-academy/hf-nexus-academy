@@ -9,28 +9,33 @@ import { CheckoutButton } from "@/components/shared/checkout-button";
 import { CURRENCIES } from "@/lib/constants";
 import { cn } from "@/lib/utils";
 
-export interface PricingPlanDisplay {
+export type PricingCardPlan = {
   key: string;
   name: string;
   description: string;
-  priceMonthlyCents: { USD: number; GBP: number; EUR: number };
+  priceUSDCents: number;
+  priceGBPCents: number;
+  priceEURCents: number;
   features: string[];
-  highlighted: boolean;
-}
+  isHighlighted: boolean;
+};
 
 export function PricingCards({
   plans,
   showCurrencySwitcher = true,
 }: {
-  plans: PricingPlanDisplay[];
+  plans: PricingCardPlan[];
   showCurrencySwitcher?: boolean;
 }) {
   const [currency, setCurrency] = React.useState<(typeof CURRENCIES)[number]>("USD");
 
+  const priceForCurrency = (plan: PricingCardPlan) =>
+    currency === "USD" ? plan.priceUSDCents : currency === "GBP" ? plan.priceGBPCents : plan.priceEURCents;
+
   if (plans.length === 0) {
     return (
-      <p className="text-center text-ink-500 py-10">
-        Pricing plans are being updated. Please check back shortly, or contact us for current rates.
+      <p className="text-center text-sm text-ink-500">
+        Pricing plans are being updated. Please check back shortly or contact us for current rates.
       </p>
     );
   }
@@ -60,11 +65,11 @@ export function PricingCards({
             key={plan.key}
             className={cn(
               "flex flex-col",
-              plan.highlighted && "border-gold-500 shadow-lg shadow-gold-500/10 lg:-translate-y-3"
+              plan.isHighlighted && "border-gold-500 shadow-lg shadow-gold-500/10 lg:-translate-y-3"
             )}
           >
             <CardHeader>
-              {plan.highlighted && (
+              {plan.isHighlighted && (
                 <span className="inline-flex w-fit rounded-full bg-gold-100 text-gold-700 text-xs font-medium px-3 py-1 mb-2">
                   Most Popular
                 </span>
@@ -76,7 +81,7 @@ export function PricingCards({
               <p className="mb-6">
                 <span className="font-display text-4xl text-navy-950">
                   {new Intl.NumberFormat("en-US", { style: "currency", currency, minimumFractionDigits: 0 }).format(
-                    plan.priceMonthlyCents[currency] / 100
+                    priceForCurrency(plan) / 100
                   )}
                 </span>
                 <span className="text-ink-500 text-sm"> / month</span>
@@ -91,7 +96,7 @@ export function PricingCards({
               </ul>
             </CardContent>
             <CardFooter>
-              <CheckoutButton planKey={plan.key} currency={currency} highlighted={plan.highlighted} />
+              <CheckoutButton planKey={plan.key} currency={currency} highlighted={plan.isHighlighted} />
             </CardFooter>
           </Card>
         ))}

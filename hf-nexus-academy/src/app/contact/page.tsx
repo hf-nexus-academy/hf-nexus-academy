@@ -1,11 +1,9 @@
 import type { Metadata } from "next";
 import { Mail, MapPin } from "lucide-react";
-import { FaWhatsapp, FaFacebookF, FaInstagram, FaYoutube, FaTiktok, FaXTwitter } from "react-icons/fa6";
+import { FaWhatsapp, FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 import { ContactForm } from "@/components/forms/contact-form";
-import { getSiteSettings } from "@/lib/data/public";
-
-export const revalidate = 60;
+import { getSiteSettings } from "@/lib/data/admin";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -16,15 +14,15 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
-  const waNumber = settings.whatsappNumber.replace(/[^0-9]/g, "");
+  const whatsappNumber = settings.whatsappNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+  const contactEmail = settings.contactEmail || "admissions@hf-nexus.com";
 
-  const socials = [
-    { icon: FaFacebookF, href: settings.facebookUrl, label: "Facebook" },
-    { icon: FaInstagram, href: settings.instagramUrl, label: "Instagram" },
-    { icon: FaYoutube, href: settings.youtubeUrl, label: "YouTube" },
-    { icon: FaTiktok, href: settings.tiktokUrl, label: "TikTok" },
-    { icon: FaXTwitter, href: settings.twitterUrl, label: "Twitter/X" },
-  ].filter((s) => s.href);
+  const socialLinks = [
+    { Icon: FaFacebookF, url: settings.facebookUrl },
+    { Icon: FaInstagram, url: settings.instagramUrl },
+    { Icon: FaYoutube, url: settings.youtubeUrl },
+    { Icon: FaTiktok, url: settings.tiktokUrl },
+  ].filter((s) => s.url);
 
   return (
     <div>
@@ -43,32 +41,34 @@ export default async function ContactPage() {
 
       <section className="bg-cream-50 py-16 lg:py-20">
         <div className="container grid lg:grid-cols-[1fr_1.2fr] gap-10">
-          <div className="flex flex-col gap-4">
-            {settings.whatsappNumber && (
-              <a href={`https://wa.me/${waNumber}`} target="_blank" rel="noopener noreferrer"
-                className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-[#25D366]/40 hover:shadow-sm transition-all">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366]/10 text-[#25D366]">
-                  <FaWhatsapp className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-display text-base text-navy-950">WhatsApp</p>
-                  <p className="text-sm text-ink-500">{settings.whatsappNumber}</p>
-                </div>
-              </a>
-            )}
+          <div className="flex flex-col gap-6">
+            <a
+              href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-[#25D366]/40 hover:shadow-sm transition-all"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-[#25D366]/10 text-[#25D366]">
+                <FaWhatsapp className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-display text-base text-navy-950">WhatsApp</p>
+                <p className="text-sm text-ink-500">Chat with our admissions team</p>
+              </div>
+            </a>
 
-            {settings.contactEmail && (
-              <a href={`mailto:${settings.contactEmail}`}
-                className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-gold-500/40 hover:shadow-sm transition-all">
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-100 text-gold-700">
-                  <Mail className="h-5 w-5" />
-                </div>
-                <div>
-                  <p className="font-display text-base text-navy-950">Email</p>
-                  <p className="text-sm text-ink-500">{settings.contactEmail}</p>
-                </div>
-              </a>
-            )}
+            <a
+              href={`mailto:${contactEmail}`}
+              className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-gold-500/40 hover:shadow-sm transition-all"
+            >
+              <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-100 text-gold-700">
+                <Mail className="h-5 w-5" />
+              </div>
+              <div>
+                <p className="font-display text-base text-navy-950">Email</p>
+                <p className="text-sm text-ink-500">{contactEmail}</p>
+              </div>
+            </a>
 
             <div className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6">
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-navy-950/5 text-navy-950">
@@ -80,16 +80,27 @@ export default async function ContactPage() {
               </div>
             </div>
 
-            {socials.length > 0 && (
+            {socialLinks.length > 0 && (
               <div className="flex items-center gap-3 pt-2">
-                {socials.map(({ icon: Icon, href, label }) => (
-                  <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                    className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-300/20 text-navy-950 hover:bg-navy-950 hover:text-gold-400 transition-colors">
+                {socialLinks.map(({ Icon, url }, i) => (
+                  <a
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Social media link"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-300/20 text-navy-950 hover:bg-navy-950 hover:text-gold-400 transition-colors"
+                  >
                     <Icon className="h-4 w-4" />
                   </a>
                 ))}
               </div>
             )}
+
+            {/* Google Maps placeholder */}
+            <div className="rounded-lg overflow-hidden border border-ink-300/15 bg-ink-300/10 h-48 flex items-center justify-center">
+              <p className="text-xs text-ink-500">Map placeholder — embed Google Maps once a physical location is configured</p>
+            </div>
           </div>
 
           <div className="rounded-xl border border-ink-300/15 bg-white p-7 sm:p-10 shadow-sm">

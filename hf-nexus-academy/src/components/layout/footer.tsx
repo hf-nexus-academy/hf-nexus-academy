@@ -1,8 +1,8 @@
 import Link from "next/link";
-import { FaFacebookF, FaInstagram, FaYoutube, FaTiktok, FaXTwitter } from "react-icons/fa6";
-import { Mail } from "lucide-react";
+import { FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
+import { Mail, MapPin } from "lucide-react";
 
-import { getSiteSettings } from "@/lib/data/public";
+import { getSiteSettings } from "@/lib/data/admin";
 
 const FOOTER_COLUMNS = [
   {
@@ -40,16 +40,20 @@ const FOOTER_COLUMNS = [
 ];
 
 export async function Footer() {
-  const settings = await getSiteSettings();
   const year = new Date().getFullYear();
+  const settings = await getSiteSettings();
 
-  const socials = [
-    { Icon: FaFacebookF, href: settings.facebookUrl, label: "Facebook" },
-    { Icon: FaInstagram, href: settings.instagramUrl, label: "Instagram" },
-    { Icon: FaYoutube, href: settings.youtubeUrl, label: "YouTube" },
-    { Icon: FaTiktok, href: settings.tiktokUrl, label: "TikTok" },
-    { Icon: FaXTwitter, href: settings.twitterUrl, label: "Twitter/X" },
-  ].filter((s) => s.href);
+  const socialLinks = [
+    { Icon: FaFacebookF, url: settings.facebookUrl },
+    { Icon: FaInstagram, url: settings.instagramUrl },
+    { Icon: FaYoutube, url: settings.youtubeUrl },
+    { Icon: FaTiktok, url: settings.tiktokUrl },
+  ].filter((s) => s.url);
+
+  const tagline =
+    settings.footerTagline ||
+    "A premium online Islamic education platform offering live, scholar-led classes in Quran, Hadith, Fiqh, Arabic, and classical Islamic sciences for students worldwide.";
+  const contactEmail = settings.contactEmail || "admissions@hf-nexus.com";
 
   return (
     <footer className="bg-navy-950 text-cream-50/80 border-t border-white/10">
@@ -58,14 +62,18 @@ export async function Footer() {
           <span className="font-display text-2xl text-cream-50">
             HF Nexus <span className="text-gold-500">Academy</span>
           </span>
-          <p className="mt-4 text-sm leading-relaxed max-w-sm text-cream-50/60">
-            {settings.footerTagline || "A premium online Islamic education platform offering live, scholar-led classes in Quran, Hadith, Fiqh, Arabic, and classical Islamic sciences for students worldwide."}
-          </p>
-          {socials.length > 0 && (
+          <p className="mt-4 text-sm leading-relaxed max-w-sm text-cream-50/60">{tagline}</p>
+          {socialLinks.length > 0 && (
             <div className="flex items-center gap-3 mt-6">
-              {socials.map(({ Icon, href, label }) => (
-                <a key={label} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}
-                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-cream-50/70 hover:bg-gold-500 hover:text-navy-950 hover:border-gold-500 transition-colors">
+              {socialLinks.map(({ Icon, url }, i) => (
+                <a
+                  key={i}
+                  href={url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  aria-label="Social media link"
+                  className="flex h-9 w-9 items-center justify-center rounded-full border border-white/15 text-cream-50/70 hover:bg-gold-500 hover:text-navy-950 hover:border-gold-500 transition-colors"
+                >
                   <Icon className="h-3.5 w-3.5" />
                 </a>
               ))}
@@ -75,11 +83,16 @@ export async function Footer() {
 
         {FOOTER_COLUMNS.map((col) => (
           <div key={col.title}>
-            <h4 className="font-display text-sm text-gold-500 tracking-wide uppercase mb-4">{col.title}</h4>
+            <h4 className="font-display text-sm text-gold-500 tracking-wide uppercase mb-4">
+              {col.title}
+            </h4>
             <ul className="flex flex-col gap-2.5">
               {col.links.map((link) => (
                 <li key={link.href}>
-                  <Link href={link.href} className="text-sm text-cream-50/65 hover:text-gold-400 transition-colors">
+                  <Link
+                    href={link.href}
+                    className="text-sm text-cream-50/65 hover:text-gold-400 transition-colors"
+                  >
                     {link.label}
                   </Link>
                 </li>
@@ -89,18 +102,17 @@ export async function Footer() {
         ))}
 
         <div>
-          <h4 className="font-display text-sm text-gold-500 tracking-wide uppercase mb-4">Get in Touch</h4>
+          <h4 className="font-display text-sm text-gold-500 tracking-wide uppercase mb-4">
+            Get in Touch
+          </h4>
           <ul className="flex flex-col gap-3 text-sm text-cream-50/65">
-            {settings.contactEmail && (
-              <li className="flex items-start gap-2">
-                <Mail className="h-4 w-4 mt-0.5 shrink-0 text-gold-500" />
-                <a href={`mailto:${settings.contactEmail}`} className="hover:text-gold-400 transition-colors">
-                  {settings.contactEmail}
-                </a>
-              </li>
-            )}
-            <li className="flex items-start gap-2 text-cream-50/40">
-              Serving students worldwide, online
+            <li className="flex items-start gap-2">
+              <Mail className="h-4 w-4 mt-0.5 shrink-0 text-gold-500" />
+              <span>{contactEmail}</span>
+            </li>
+            <li className="flex items-start gap-2">
+              <MapPin className="h-4 w-4 mt-0.5 shrink-0 text-gold-500" />
+              <span>Serving students worldwide, online</span>
             </li>
           </ul>
         </div>

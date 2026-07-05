@@ -1,8 +1,11 @@
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
-import { getPublishedFaqs } from "@/lib/data/public";
+import { prisma } from "@/lib/prisma";
 
-export async function Faq({ placement = "general" }: { placement?: string }) {
-  const faqs = await getPublishedFaqs(placement);
+export async function Faq() {
+  const faqs = await prisma.faq.findMany({
+    where: { isPublished: true, placement: "general" },
+    orderBy: { displayOrder: "asc" },
+  });
 
   if (faqs.length === 0) return null;
 

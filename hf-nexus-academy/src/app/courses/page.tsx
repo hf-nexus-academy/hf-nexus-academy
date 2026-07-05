@@ -2,8 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 
-import { CATEGORY_META } from "@/lib/courses-data";
-import { getPublishedCourses } from "@/lib/data/public";
+import { COURSES_BY_CATEGORY, CATEGORY_META } from "@/lib/courses-data";
 
 export const metadata: Metadata = {
   title: "Courses",
@@ -12,18 +11,9 @@ export const metadata: Metadata = {
   alternates: { canonical: "/courses" },
 };
 
-export const revalidate = 60;
-
 const CATEGORIES = Object.keys(CATEGORY_META);
 
-export default async function CoursesIndexPage() {
-  const courses = await getPublishedCourses();
-  const countsByCategory: Record<string, number> = {};
-  for (const course of courses) {
-    const key = course.category.toLowerCase();
-    countsByCategory[key] = (countsByCategory[key] ?? 0) + 1;
-  }
-
+export default function CoursesIndexPage() {
   return (
     <div>
       <section className="bg-navy-950 py-20 lg:py-24">
@@ -45,7 +35,7 @@ export default async function CoursesIndexPage() {
         <div className="container flex flex-col gap-6">
           {CATEGORIES.map((cat) => {
             const meta = CATEGORY_META[cat];
-            const courseCount = countsByCategory[cat] ?? 0;
+            const courseCount = COURSES_BY_CATEGORY[cat]?.length ?? 0;
             return (
               <Link
                 key={cat}

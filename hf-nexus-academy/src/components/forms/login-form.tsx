@@ -42,7 +42,9 @@ export function LoginForm() {
       });
 
       if (result?.error) {
-        toast.error("Incorrect email or password. Please try again.");
+        toast.error(
+          "We couldn't log you in. Check your email and password, and make sure you've verified your email address."
+        );
         setIsSubmitting(false);
         return;
       }

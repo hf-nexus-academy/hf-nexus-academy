@@ -8,8 +8,6 @@ export const metadata: Metadata = {
   alternates: { canonical: "/courses/arabic" },
 };
 
-export const revalidate = 60;
-
 export default function ArabicCoursesPage() {
   return <CourseCategoryPage category="arabic" />;
 }
