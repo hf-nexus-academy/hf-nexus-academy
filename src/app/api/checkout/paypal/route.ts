@@ -4,10 +4,10 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { getPayPalClient, paypal } from "@/lib/paypal";
-import { getPlanPriceCents, CURRENCIES } from "@/lib/constants";
+import { CURRENCIES } from "@/lib/constants";
 
 const schema = z.object({
-  plan: z.enum(["STARTER", "STANDARD", "PREMIUM"]),
+  plan: z.string().min(1),
   currency: z.enum(CURRENCIES).default("USD"),
 });
 
@@ -29,7 +29,17 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student profile not found." }, { status: 404 });
     }
 
-    const amountCents = getPlanPriceCents(parsed.data.plan, parsed.data.currency);
+    const plan = await prisma.pricingPlan.findUnique({ where: { key: parsed.data.plan } });
+    if (!plan || !plan.isPublished) {
+      return NextResponse.json({ error: "This plan is not available." }, { status: 404 });
+    }
+
+    const amountCents =
+      parsed.data.currency === "USD"
+        ? plan.priceUSDCents
+        : parsed.data.currency === "GBP"
+          ? plan.priceGBPCents
+          : plan.priceEURCents;
     const amountValue = (amountCents / 100).toFixed(2);
 
     const client = getPayPalClient();
@@ -39,8 +49,8 @@ export async function POST(req: Request) {
       purchase_units: [
         {
           amount: { currency_code: parsed.data.currency, value: amountValue },
-          description: `HF Nexus Academy — ${parsed.data.plan} Plan (Monthly)`,
-          custom_id: JSON.stringify({ studentId: student.id, plan: parsed.data.plan }),
+          description: `HF Nexus Academy — ${plan.name} Plan (Monthly)`,
+          custom_id: JSON.stringify({ studentId: student.id, plan: plan.key }),
         },
       ],
     });

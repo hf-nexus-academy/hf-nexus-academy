@@ -4,10 +4,10 @@ import { z } from "zod";
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { requireStripe } from "@/lib/stripe";
-import { getStripePriceId, CURRENCIES } from "@/lib/constants";
+import { CURRENCIES } from "@/lib/constants";
 
 const schema = z.object({
-  plan: z.enum(["STARTER", "STANDARD", "PREMIUM"]),
+  plan: z.string().min(1),
   currency: z.enum(CURRENCIES).default("USD"),
 });
 
@@ -29,8 +29,12 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Student profile not found." }, { status: 404 });
     }
 
-    const priceId = getStripePriceId(parsed.data.plan);
-    if (!priceId) {
+    const plan = await prisma.pricingPlan.findUnique({ where: { key: parsed.data.plan } });
+    if (!plan || !plan.isPublished) {
+      return NextResponse.json({ error: "This plan is not available." }, { status: 404 });
+    }
+
+    if (!plan.stripePriceId) {
       return NextResponse.json(
         { error: "This plan is not yet configured for checkout. Please contact support." },
         { status: 503 }
@@ -43,13 +47,13 @@ export async function POST(req: Request) {
     const checkoutSession = await stripe.checkout.sessions.create({
       mode: "subscription",
       payment_method_types: ["card"],
-      line_items: [{ price: priceId, quantity: 1 }],
+      line_items: [{ price: plan.stripePriceId, quantity: 1 }],
       customer_email: session.user.email ?? undefined,
       success_url: `${appUrl}/student/billing?success=true`,
       cancel_url: `${appUrl}/pricing?canceled=true`,
       metadata: {
         studentId: student.id,
-        plan: parsed.data.plan,
+        plan: plan.key,
       },
     });
 

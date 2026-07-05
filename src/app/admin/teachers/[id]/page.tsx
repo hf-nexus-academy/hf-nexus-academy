@@ -2,10 +2,11 @@ import { notFound } from "next/navigation";
 import { BookOpen } from "lucide-react";
 
 import { getTeacherFullDetail } from "@/lib/data/admin";
-import { Avatar, AvatarFallback } from "@/components/ui/avatar";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { PublishToggle } from "@/components/portal/admin/publish-toggle";
 import { UserStatusToggle } from "@/components/portal/admin/user-status-toggle";
+import { EditTeacherForm } from "@/components/portal/admin/edit-teacher-form";
 import { getInitials } from "@/lib/utils";
 
 export async function generateMetadata() {
@@ -22,6 +23,7 @@ export default async function AdminTeacherDetailPage({ params }: { params: Promi
       <div className="flex items-center justify-between gap-4 mb-8">
         <div className="flex items-center gap-4">
           <Avatar className="h-14 w-14">
+            {teacher.photoUrl && <AvatarImage src={teacher.photoUrl} alt={teacher.user.name} />}
             <AvatarFallback className="text-base">{getInitials(teacher.user.name)}</AvatarFallback>
           </Avatar>
           <div>
@@ -45,15 +47,17 @@ export default async function AdminTeacherDetailPage({ params }: { params: Promi
       </div>
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">
-        <h2 className="font-display text-base text-navy-950 mb-3">Biography</h2>
-        <p className="text-sm text-ink-500 leading-relaxed mb-4">{teacher.bio}</p>
-        <div className="flex flex-wrap gap-2">
-          {teacher.specializations.map((s) => (
-            <Badge key={s} variant="gold">
-              {s}
-            </Badge>
-          ))}
-        </div>
+        <h2 className="font-display text-base text-navy-950 mb-4">Public Profile</h2>
+        <EditTeacherForm
+          teacherId={teacher.id}
+          initialPhotoUrl={teacher.photoUrl}
+          defaultValues={{
+            title: teacher.title ?? "",
+            bio: teacher.bio,
+            specializations: teacher.specializations,
+            experienceYears: teacher.experienceYears,
+          }}
+        />
       </div>
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6">

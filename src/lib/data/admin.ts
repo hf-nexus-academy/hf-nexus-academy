@@ -138,3 +138,19 @@ export async function getAllAnnouncements() {
 export async function getAllContactLeads() {
   return prisma.contactLead.findMany({ orderBy: { createdAt: "desc" }, take: 100 });
 }
+
+export async function getAllFaqs() {
+  return prisma.faq.findMany({ orderBy: [{ placement: "asc" }, { displayOrder: "asc" }] });
+}
+
+export async function getAllPricingPlans() {
+  return prisma.pricingPlan.findMany({ orderBy: { displayOrder: "asc" } });
+}
+
+export async function getSiteSettings() {
+  const settings = await prisma.siteSettings.findUnique({ where: { key: "global" } });
+  if (settings) return settings;
+  // First-load fallback: create the single settings row with schema defaults
+  // so the admin form and public pages always have a row to read/write.
+  return prisma.siteSettings.create({ data: { key: "global" } });
+}

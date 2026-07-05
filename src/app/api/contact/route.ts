@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { sendContactLeadNotification } from "@/lib/email";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const contactSchema = z.object({
   fullName: z.string().min(2).max(100),
@@ -12,6 +13,9 @@ const contactSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limit = await checkRateLimit(req, "contact", { requests: 5, windowSeconds: 60 * 10 });
+  if (limit && !limit.success) return rateLimitResponse();
+
   try {
     const body = await req.json();
     const parsed = contactSchema.safeParse(body);

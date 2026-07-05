@@ -40,7 +40,7 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Payment metadata missing." }, { status: 500 });
     }
 
-    const { studentId, plan } = JSON.parse(customId) as { studentId: string; plan: "STARTER" | "STANDARD" | "PREMIUM" };
+    const { studentId, plan } = JSON.parse(customId) as { studentId: string; plan: string };
 
     const amountCents = Math.round(parseFloat(captureDetails?.amount?.value ?? "0") * 100);
     const currency = captureDetails?.amount?.currency_code ?? "USD";
@@ -52,7 +52,7 @@ export async function POST(req: Request) {
         studentId,
         provider: "PAYPAL",
         providerRef: result.id!,
-        plan,
+        planKey: plan,
         billingCycle: "MONTHLY",
         amountCents,
         currency,

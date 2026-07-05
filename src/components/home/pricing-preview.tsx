@@ -1,7 +1,13 @@
 import Link from "next/link";
 import { PricingCards } from "@/components/shared/pricing-cards";
+import { prisma } from "@/lib/prisma";
 
-export function PricingPreview() {
+export async function PricingPreview() {
+  const plans = await prisma.pricingPlan.findMany({
+    where: { isPublished: true },
+    orderBy: { displayOrder: "asc" },
+  });
+
   return (
     <section className="bg-cream-100 py-20 lg:py-28">
       <div className="container">
@@ -11,7 +17,7 @@ export function PricingPreview() {
             Simple plans for every stage of learning
           </h2>
         </div>
-        <PricingCards />
+        <PricingCards plans={plans} />
         <p className="text-center text-sm text-ink-500 mt-10">
           Need help choosing?{" "}
           <Link href="/pricing" className="text-gold-700 font-medium hover:underline">

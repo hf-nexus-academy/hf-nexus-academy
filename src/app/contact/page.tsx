@@ -3,6 +3,7 @@ import { Mail, MapPin } from "lucide-react";
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 import { ContactForm } from "@/components/forms/contact-form";
+import { getSiteSettings } from "@/lib/data/admin";
 
 export const metadata: Metadata = {
   title: "Contact Us",
@@ -11,8 +12,17 @@ export const metadata: Metadata = {
   alternates: { canonical: "/contact" },
 };
 
-export default function ContactPage() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+export default async function ContactPage() {
+  const settings = await getSiteSettings();
+  const whatsappNumber = settings.whatsappNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+  const contactEmail = settings.contactEmail || "admissions@hf-nexus.com";
+
+  const socialLinks = [
+    { Icon: FaFacebookF, url: settings.facebookUrl },
+    { Icon: FaInstagram, url: settings.instagramUrl },
+    { Icon: FaYoutube, url: settings.youtubeUrl },
+    { Icon: FaTiktok, url: settings.tiktokUrl },
+  ].filter((s) => s.url);
 
   return (
     <div>
@@ -48,7 +58,7 @@ export default function ContactPage() {
             </a>
 
             <a
-              href="mailto:admissions@hf-nexus.com"
+              href={`mailto:${contactEmail}`}
               className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-gold-500/40 hover:shadow-sm transition-all"
             >
               <div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-100 text-gold-700">
@@ -56,7 +66,7 @@ export default function ContactPage() {
               </div>
               <div>
                 <p className="font-display text-base text-navy-950">Email</p>
-                <p className="text-sm text-ink-500">admissions@hf-nexus.com</p>
+                <p className="text-sm text-ink-500">{contactEmail}</p>
               </div>
             </a>
 
@@ -70,18 +80,22 @@ export default function ContactPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 pt-2">
-              {[FaFacebookF, FaInstagram, FaYoutube, FaTiktok].map((Icon, i) => (
-                <a
-                  key={i}
-                  href="#"
-                  aria-label="Social media link"
-                  className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-300/20 text-navy-950 hover:bg-navy-950 hover:text-gold-400 transition-colors"
-                >
-                  <Icon className="h-4 w-4" />
-                </a>
-              ))}
-            </div>
+            {socialLinks.length > 0 && (
+              <div className="flex items-center gap-3 pt-2">
+                {socialLinks.map(({ Icon, url }, i) => (
+                  <a
+                    key={i}
+                    href={url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    aria-label="Social media link"
+                    className="flex h-10 w-10 items-center justify-center rounded-full border border-ink-300/20 text-navy-950 hover:bg-navy-950 hover:text-gold-400 transition-colors"
+                  >
+                    <Icon className="h-4 w-4" />
+                  </a>
+                ))}
+              </div>
+            )}
 
             {/* Google Maps placeholder */}
             <div className="rounded-lg overflow-hidden border border-ink-300/15 bg-ink-300/10 h-48 flex items-center justify-center">

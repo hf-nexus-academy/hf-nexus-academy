@@ -5,6 +5,7 @@ import { nanoid } from "nanoid";
 
 import { prisma } from "@/lib/prisma";
 import { sendVerificationEmail } from "@/lib/email";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const registerSchema = z.object({
   name: z.string().min(2).max(100),
@@ -15,6 +16,9 @@ const registerSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limit = await checkRateLimit(req, "register", { requests: 5, windowSeconds: 60 * 15 });
+  if (limit && !limit.success) return rateLimitResponse();
+
   try {
     const body = await req.json();
     const parsed = registerSchema.safeParse(body);

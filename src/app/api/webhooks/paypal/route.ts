@@ -86,7 +86,7 @@ export async function POST(req: Request) {
         if (customId) {
           const { studentId, plan } = JSON.parse(customId) as {
             studentId: string;
-            plan: "STARTER" | "STANDARD" | "PREMIUM";
+            plan: string;
           };
           const amountCents = Math.round(parseFloat(event.resource.amount?.value ?? "0") * 100);
 
@@ -97,7 +97,7 @@ export async function POST(req: Request) {
               studentId,
               provider: "PAYPAL",
               providerRef: event.resource.id,
-              plan,
+              planKey: plan,
               billingCycle: "MONTHLY",
               amountCents,
               currency: event.resource.amount?.currency_code ?? "USD",

@@ -3,6 +3,7 @@ import { z } from "zod";
 
 import { prisma } from "@/lib/prisma";
 import { sendContactLeadNotification } from "@/lib/email";
+import { checkRateLimit, rateLimitResponse } from "@/lib/rate-limit";
 
 const freeTrialSchema = z.object({
   fullName: z.string().min(2).max(100),
@@ -22,6 +23,9 @@ const freeTrialSchema = z.object({
 });
 
 export async function POST(req: Request) {
+  const limit = await checkRateLimit(req, "free-trial", { requests: 5, windowSeconds: 60 * 10 });
+  if (limit && !limit.success) return rateLimitResponse();
+
   try {
     const body = await req.json();
     const parsed = freeTrialSchema.safeParse(body);

@@ -4,6 +4,7 @@ import { prisma } from "@/lib/prisma";
 import { getAllTeachersForSelect } from "@/lib/data/admin";
 import { PortalSectionHeader } from "@/components/portal/shared/section-header";
 import { PublishToggle } from "@/components/portal/admin/publish-toggle";
+import { EditCourseForm } from "@/components/portal/admin/edit-course-form";
 import { Badge } from "@/components/ui/badge";
 import { COURSE_CATEGORY_LABELS } from "@/lib/constants";
 
@@ -46,8 +47,19 @@ export default async function AdminCourseDetailPage({ params }: { params: Promis
       />
 
       <div className="rounded-lg border border-ink-300/15 bg-white p-6 mb-6">
-        <p className="text-sm text-ink-500 leading-relaxed mb-4">{course.description}</p>
-        <p className="text-sm text-navy-950">
+        <h2 className="font-display text-base text-navy-950 mb-4">Course Content</h2>
+        <EditCourseForm
+          courseId={course.id}
+          defaultValues={{
+            title: course.title,
+            subtitle: course.subtitle ?? "",
+            description: course.description,
+          }}
+          initialCoverImageUrl={course.coverImageUrl}
+          initialIsFeatured={course.isFeatured}
+          initialEnrollmentOpen={course.enrollmentOpen}
+        />
+        <p className="text-sm text-navy-950 mt-6 pt-4 border-t border-ink-300/10">
           <span className="font-medium">Teacher:</span> {course.teacher?.user.name ?? "Unassigned"}
         </p>
       </div>

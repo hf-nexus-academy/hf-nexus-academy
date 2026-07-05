@@ -18,11 +18,11 @@ import {
 import type { CURRENCIES } from "@/lib/constants";
 
 export function CheckoutButton({
-  planId,
+  planKey,
   currency,
   highlighted,
 }: {
-  planId: "STARTER" | "STANDARD" | "PREMIUM";
+  planKey: string;
   currency: (typeof CURRENCIES)[number];
   highlighted?: boolean;
 }) {
@@ -49,7 +49,7 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout/stripe", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId, currency }),
+        body: JSON.stringify({ plan: planKey, currency }),
       });
       const data = await res.json();
 
@@ -72,7 +72,7 @@ export function CheckoutButton({
       const res = await fetch("/api/checkout/paypal", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ plan: planId, currency }),
+        body: JSON.stringify({ plan: planKey, currency }),
       });
       const data = await res.json();
 

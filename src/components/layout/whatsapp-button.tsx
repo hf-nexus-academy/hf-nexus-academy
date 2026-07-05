@@ -3,8 +3,8 @@
 import { FaWhatsapp } from "react-icons/fa";
 import { motion } from "framer-motion";
 
-export function WhatsAppFloatingButton() {
-  const number = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+export function WhatsAppFloatingButton({ number: numberProp }: { number?: string }) {
+  const number = numberProp || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
   const message = encodeURIComponent(
     "Assalamu Alaikum, I'm interested in HF Nexus Academy courses."
   );

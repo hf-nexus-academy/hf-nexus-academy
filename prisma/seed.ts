@@ -456,6 +456,172 @@ async function main() {
   }
   console.log(`Seeded ${blogSeeds.length} blog posts.`);
 
+  // -----------------------------
+  // Pricing plans
+  // -----------------------------
+  const pricingPlanSeeds = [
+    {
+      key: "STARTER",
+      name: "Starter",
+      description: "For students beginning their Islamic learning journey.",
+      priceUSDCents: 5900,
+      priceGBPCents: 4700,
+      priceEURCents: 5400,
+      features: [
+        "1 live class per week",
+        "Access to one course track",
+        "Recorded class library",
+        "Email support",
+      ],
+      isHighlighted: false,
+      displayOrder: 0,
+    },
+    {
+      key: "STANDARD",
+      name: "Standard",
+      description: "Our most popular plan for consistent, structured learning.",
+      priceUSDCents: 9900,
+      priceGBPCents: 7800,
+      priceEURCents: 9100,
+      features: [
+        "2 live classes per week",
+        "Access to up to 3 course tracks",
+        "Assignment feedback",
+        "Progress tracking & certificates",
+        "Priority WhatsApp support",
+      ],
+      isHighlighted: true,
+      displayOrder: 1,
+    },
+    {
+      key: "PREMIUM",
+      name: "Premium",
+      description: "Full access for serious, accelerated study.",
+      priceUSDCents: 17900,
+      priceGBPCents: 14100,
+      priceEURCents: 16500,
+      features: [
+        "Unlimited live classes",
+        "Full access to all course tracks",
+        "1-on-1 mentorship sessions",
+        "Hifz support included",
+        "Certificates of completion",
+        "Dedicated academic advisor",
+      ],
+      isHighlighted: false,
+      displayOrder: 2,
+    },
+  ];
+
+  for (const plan of pricingPlanSeeds) {
+    await prisma.pricingPlan.upsert({
+      where: { key: plan.key },
+      update: {},
+      create: plan,
+    });
+  }
+  console.log(`Seeded ${pricingPlanSeeds.length} pricing plans.`);
+
+  // -----------------------------
+  // FAQs
+  // -----------------------------
+  const faqSeeds = [
+    {
+      placement: "general",
+      displayOrder: 0,
+      question: "How do live online classes work?",
+      answer:
+        "Classes are conducted live through video conferencing, with your teacher guiding the session in real time. You can ask questions, get immediate feedback, and interact directly — just like an in-person class, but from anywhere in the world.",
+    },
+    {
+      placement: "general",
+      displayOrder: 1,
+      question: "What age groups do you teach?",
+      answer:
+        "We teach students of all ages, from young children beginning their Quran journey to adults studying Fiqh, Hadith, or Arabic. Class pacing and teaching style are adjusted to the student's age and level.",
+    },
+    {
+      placement: "general",
+      displayOrder: 2,
+      question: "Do I need any prior knowledge to start?",
+      answer:
+        "No prior knowledge is required for our beginner-level courses. Our teachers assess your current level during the free trial class and build a learning plan suited to where you're starting from.",
+    },
+    {
+      placement: "general",
+      displayOrder: 3,
+      question: "What if the class timing doesn't suit my timezone?",
+      answer:
+        "We serve students across many timezones and offer flexible scheduling. During your free trial booking, you can specify your preferred times and we'll match you with a suitable class slot.",
+    },
+    {
+      placement: "general",
+      displayOrder: 4,
+      question: "Can I switch teachers or courses later?",
+      answer:
+        "Yes. If you feel another teacher or course track would suit you better, simply reach out to our support team and we'll help arrange the change.",
+    },
+    {
+      placement: "general",
+      displayOrder: 5,
+      question: "How do I pay, and which currencies are supported?",
+      answer:
+        "We accept payments via Stripe and PayPal, with pricing available in USD, GBP, and EUR. You can manage your subscription and billing history from your student dashboard.",
+    },
+    {
+      placement: "pricing",
+      displayOrder: 0,
+      question: "Can I change plans later?",
+      answer:
+        "Yes, you can upgrade or downgrade your plan at any time from your student dashboard. Changes take effect at the start of your next billing cycle.",
+    },
+    {
+      placement: "pricing",
+      displayOrder: 1,
+      question: "Is there a long-term contract?",
+      answer:
+        "No. All plans are billed monthly with no long-term commitment. You can cancel anytime from your account settings.",
+    },
+    {
+      placement: "pricing",
+      displayOrder: 2,
+      question: "Do you offer family or sibling discounts?",
+      answer:
+        "Yes, families enrolling multiple children can contact our admissions team for custom pricing arrangements.",
+    },
+    {
+      placement: "pricing",
+      displayOrder: 3,
+      question: "What payment methods are accepted?",
+      answer: "We accept all major credit and debit cards via Stripe, as well as PayPal, in USD, GBP, or EUR.",
+    },
+  ];
+
+  for (const faq of faqSeeds) {
+    const existing = await prisma.faq.findFirst({
+      where: { placement: faq.placement, question: faq.question },
+    });
+    if (!existing) {
+      await prisma.faq.create({ data: faq });
+    }
+  }
+  console.log(`Seeded ${faqSeeds.length} FAQs.`);
+
+  // -----------------------------
+  // Site settings (singleton row)
+  // -----------------------------
+  await prisma.siteSettings.upsert({
+    where: { key: "global" },
+    update: {},
+    create: {
+      key: "global",
+      contactEmail: "admissions@hf-nexus.com",
+      metaTitle: "HF Nexus Academy",
+      footerTagline: "Premium online Islamic education for students worldwide.",
+    },
+  });
+  console.log("Seeded site settings.");
+
   console.log("Seeding complete.");
 }
 

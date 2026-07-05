@@ -12,6 +12,7 @@ const schema = z.object({
   category: z.enum(["QURAN", "HADITH", "FIQH", "ARABIC", "ISLAMIC_FOUNDATIONS", "AQEEDAH", "LOGIC"]),
   authorName: z.string().min(2).max(100),
   status: z.enum(["DRAFT", "PUBLISHED", "ARCHIVED"]).default("DRAFT"),
+  coverImageUrl: z.string().url().nullable().optional().or(z.literal("")),
 });
 
 export async function POST(req: Request) {
@@ -37,6 +38,7 @@ export async function POST(req: Request) {
     const post = await prisma.blogPost.create({
       data: {
         ...parsed.data,
+        coverImageUrl: parsed.data.coverImageUrl || null,
         slug,
         publishedAt: parsed.data.status === "PUBLISHED" ? new Date() : undefined,
       },

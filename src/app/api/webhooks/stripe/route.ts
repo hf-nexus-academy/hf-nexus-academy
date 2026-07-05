@@ -35,7 +35,7 @@ export async function POST(req: Request) {
       case "checkout.session.completed": {
         const checkoutSession = event.data.object as Stripe.Checkout.Session;
         const studentId = checkoutSession.metadata?.studentId;
-        const plan = checkoutSession.metadata?.plan as "STARTER" | "STANDARD" | "PREMIUM" | undefined;
+        const plan = checkoutSession.metadata?.plan;
 
         if (studentId && plan && checkoutSession.id) {
           await prisma.payment.upsert({
@@ -45,7 +45,7 @@ export async function POST(req: Request) {
               studentId,
               provider: "STRIPE",
               providerRef: checkoutSession.id,
-              plan,
+              planKey: plan,
               billingCycle: "MONTHLY",
               amountCents: checkoutSession.amount_total ?? 0,
               currency: (checkoutSession.currency ?? "usd").toUpperCase(),

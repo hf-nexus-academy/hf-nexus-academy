@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select";
+import { ImageUpload } from "@/components/portal/admin/image-upload";
 
 const schema = z.object({
   title: z.string().min(2, "Enter a title."),
@@ -26,12 +27,15 @@ type Values = z.infer<typeof schema>;
 export function EditBlogPostForm({
   postId,
   defaultValues,
+  initialCoverImageUrl,
 }: {
   postId: string;
   defaultValues: Values;
+  initialCoverImageUrl: string | null;
 }) {
   const router = useRouter();
   const [isSubmitting, setIsSubmitting] = React.useState(false);
+  const [coverImageUrl, setCoverImageUrl] = React.useState(initialCoverImageUrl ?? "");
 
   const {
     register,
@@ -46,7 +50,7 @@ export function EditBlogPostForm({
       const res = await fetch(`/api/admin/blog/${postId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(values),
+        body: JSON.stringify({ ...values, coverImageUrl: coverImageUrl || null }),
       });
       const data = await res.json();
 
@@ -66,6 +70,8 @@ export function EditBlogPostForm({
 
   return (
     <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4 max-w-2xl">
+      <ImageUpload label="Cover Image" folder="blog" value={coverImageUrl} onChange={setCoverImageUrl} />
+
       <div className="flex flex-col gap-1.5">
         <Label htmlFor="title">Title</Label>
         <Input id="title" error={!!errors.title} {...register("title")} />

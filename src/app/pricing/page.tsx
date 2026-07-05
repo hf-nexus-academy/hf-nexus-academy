@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { PricingCards } from "@/components/shared/pricing-cards";
 import { Accordion, AccordionItem, AccordionTrigger, AccordionContent } from "@/components/ui/accordion";
+import { prisma } from "@/lib/prisma";
 
 export const metadata: Metadata = {
   title: "Pricing",
@@ -9,30 +10,15 @@ export const metadata: Metadata = {
   alternates: { canonical: "/pricing" },
 };
 
-const PRICING_FAQS = [
-  {
-    question: "Can I change plans later?",
-    answer:
-      "Yes, you can upgrade or downgrade your plan at any time from your student dashboard. Changes take effect at the start of your next billing cycle.",
-  },
-  {
-    question: "Is there a long-term contract?",
-    answer:
-      "No. All plans are billed monthly with no long-term commitment. You can cancel anytime from your account settings.",
-  },
-  {
-    question: "Do you offer family or sibling discounts?",
-    answer:
-      "Yes, families enrolling multiple children can contact our admissions team for custom pricing arrangements.",
-  },
-  {
-    question: "What payment methods are accepted?",
-    answer:
-      "We accept all major credit and debit cards via Stripe, as well as PayPal, in USD, GBP, or EUR.",
-  },
-];
+export default async function PricingPage() {
+  const [plans, faqs] = await Promise.all([
+    prisma.pricingPlan.findMany({ where: { isPublished: true }, orderBy: { displayOrder: "asc" } }),
+    prisma.faq.findMany({
+      where: { isPublished: true, placement: "pricing" },
+      orderBy: { displayOrder: "asc" },
+    }),
+  ]);
 
-export default function PricingPage() {
   return (
     <div>
       <section className="bg-navy-950 py-20 lg:py-24">
@@ -50,23 +36,25 @@ export default function PricingPage() {
 
       <section className="bg-cream-50 py-16 lg:py-20">
         <div className="container">
-          <PricingCards />
+          <PricingCards plans={plans} />
         </div>
       </section>
 
-      <section className="bg-cream-100 py-16 lg:py-20">
-        <div className="container max-w-2xl">
-          <h2 className="font-display text-2xl text-navy-950 mb-6 text-center">Pricing FAQ</h2>
-          <Accordion type="single" collapsible>
-            {PRICING_FAQS.map((faq) => (
-              <AccordionItem key={faq.question} value={faq.question}>
-                <AccordionTrigger>{faq.question}</AccordionTrigger>
-                <AccordionContent>{faq.answer}</AccordionContent>
-              </AccordionItem>
-            ))}
-          </Accordion>
-        </div>
-      </section>
+      {faqs.length > 0 && (
+        <section className="bg-cream-100 py-16 lg:py-20">
+          <div className="container max-w-2xl">
+            <h2 className="font-display text-2xl text-navy-950 mb-6 text-center">Pricing FAQ</h2>
+            <Accordion type="single" collapsible>
+              {faqs.map((faq) => (
+                <AccordionItem key={faq.id} value={faq.id}>
+                  <AccordionTrigger>{faq.question}</AccordionTrigger>
+                  <AccordionContent>{faq.answer}</AccordionContent>
+                </AccordionItem>
+              ))}
+            </Accordion>
+          </div>
+        </section>
+      )}
     </div>
   );
 }
