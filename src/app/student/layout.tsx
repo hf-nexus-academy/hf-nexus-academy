@@ -1,15 +1,5 @@
 import type { Metadata } from "next";
 import { redirect } from "next/navigation";
-import {
-  LayoutDashboard,
-  BookOpen,
-  ClipboardList,
-  CalendarCheck,
-  Award,
-  NotebookPen,
-  UserCircle,
-  CreditCard,
-} from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { PortalSidebar, PortalMobileNav, type PortalNavItem } from "@/components/portal/shared/portal-sidebar";
@@ -19,14 +9,14 @@ export const metadata: Metadata = {
 };
 
 const STUDENT_NAV: PortalNavItem[] = [
-  { label: "Dashboard", href: "/student", icon: LayoutDashboard },
-  { label: "My Courses", href: "/student/courses", icon: BookOpen },
-  { label: "Assignments", href: "/student/assignments", icon: ClipboardList },
-  { label: "Attendance", href: "/student/attendance", icon: CalendarCheck },
-  { label: "Certificates", href: "/student/certificates", icon: Award },
-  { label: "Billing", href: "/student/billing", icon: CreditCard },
-  { label: "Notes", href: "/student/notes", icon: NotebookPen },
-  { label: "Profile", href: "/student/profile", icon: UserCircle },
+  { label: "Dashboard", href: "/student", iconName: "LayoutDashboard" },
+  { label: "My Courses", href: "/student/courses", iconName: "BookOpen" },
+  { label: "Assignments", href: "/student/assignments", iconName: "ClipboardList" },
+  { label: "Attendance", href: "/student/attendance", iconName: "CalendarCheck" },
+  { label: "Certificates", href: "/student/certificates", iconName: "Award" },
+  { label: "Billing", href: "/student/billing", iconName: "CreditCard" },
+  { label: "Notes", href: "/student/notes", iconName: "NotebookPen" },
+  { label: "Profile", href: "/student/profile", iconName: "UserCircle" },
 ];
 
 export default async function StudentLayout({ children }: { children: React.ReactNode }) {

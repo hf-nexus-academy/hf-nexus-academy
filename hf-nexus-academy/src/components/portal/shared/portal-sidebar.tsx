@@ -3,14 +3,65 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { signOut } from "next-auth/react";
-import { LogOut, type LucideIcon } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  BookOpen,
+  CreditCard,
+  CalendarCheck,
+  MessageSquareQuote,
+  Newspaper,
+  Megaphone,
+  BarChart3,
+  Tag,
+  HelpCircle,
+  Settings,
+  Video,
+  ClipboardList,
+  Bell,
+  FolderOpen,
+  Award,
+  NotebookPen,
+  UserCircle,
+  type LucideIcon,
+} from "lucide-react";
 
 import { cn } from "@/lib/utils";
+
+// Server Components (the portal layouts) can't pass component/function
+// references as props to Client Components like this one — React can only
+// serialize plain data across that boundary. So nav items carry a plain
+// string `iconName`, and this map resolves it to the actual icon component
+// here, on the client.
+const ICON_MAP: Record<string, LucideIcon> = {
+  LayoutDashboard,
+  Users,
+  GraduationCap,
+  BookOpen,
+  CreditCard,
+  CalendarCheck,
+  MessageSquareQuote,
+  Newspaper,
+  Megaphone,
+  BarChart3,
+  Tag,
+  HelpCircle,
+  Settings,
+  Video,
+  ClipboardList,
+  Bell,
+  FolderOpen,
+  Award,
+  NotebookPen,
+  UserCircle,
+};
 
 export interface PortalNavItem {
   label: string;
   href: string;
-  icon: LucideIcon;
+  iconName: string;
 }
 
 export function PortalSidebar({
@@ -32,6 +83,7 @@ export function PortalSidebar({
       <nav className="flex-1 p-4 flex flex-col gap-1">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          const Icon = ICON_MAP[item.iconName] ?? LayoutDashboard;
           return (
             <Link
               key={item.href}
@@ -43,7 +95,7 @@ export function PortalSidebar({
                   : "text-cream-50/70 hover:bg-white/5 hover:text-cream-50"
               )}
             >
-              <item.icon className="h-4 w-4" />
+              <Icon className="h-4 w-4" />
               {item.label}
             </Link>
           );
@@ -75,6 +127,7 @@ export function PortalMobileNav({
       <div className="flex gap-1 px-3 py-2 min-w-max">
         {navItems.map((item) => {
           const active = pathname === item.href || pathname.startsWith(item.href + "/");
+          const Icon = ICON_MAP[item.iconName] ?? LayoutDashboard;
           return (
             <Link
               key={item.href}
@@ -84,7 +137,7 @@ export function PortalMobileNav({
                 active ? "bg-gold-500 text-navy-950" : "text-cream-50/70"
               )}
             >
-              <item.icon className="h-3.5 w-3.5" />
+              <Icon className="h-3.5 w-3.5" />
               {item.label}
             </Link>
           );
