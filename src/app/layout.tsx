@@ -11,6 +11,12 @@ import { getSiteSettings } from "@/lib/data/admin";
 
 const APP_URL = process.env.NEXT_PUBLIC_APP_URL || "https://hf-nexus.com";
 
+// Applies to every page in the app (this is the root layout): re-checks the
+// database at most once every 60 seconds instead of freezing content at
+// build time. Without this, admin edits (Site Settings, FAQs, etc.) would
+// only appear on statically-generated pages after the next full deployment.
+export const revalidate = 60;
+
 export async function generateMetadata(): Promise<Metadata> {
   const settings = await getSiteSettings();
 
