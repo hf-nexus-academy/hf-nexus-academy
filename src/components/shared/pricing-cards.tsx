@@ -96,7 +96,7 @@ export function PricingCards({
               </ul>
             </CardContent>
             <CardFooter>
-              <CheckoutButton planKey={plan.key} currency={currency} highlighted={plan.isHighlighted} />
+              <CheckoutButton planKey={plan.key} planName={plan.name} highlighted={plan.isHighlighted} />
             </CardFooter>
           </Card>
         ))}

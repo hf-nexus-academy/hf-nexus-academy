@@ -1,9 +1,10 @@
 import { CreditCard } from "lucide-react";
 
-import { getAllPayments } from "@/lib/data/admin";
+import { getAllPayments, getAllStudents, getAllPricingPlans, getAllCourses } from "@/lib/data/admin";
 import { PortalSectionHeader } from "@/components/portal/shared/section-header";
 import { PortalEmptyState } from "@/components/portal/shared/empty-state";
 import { Badge } from "@/components/ui/badge";
+import { RecordPaymentDialog } from "@/components/portal/admin/record-payment-dialog";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
 export const metadata = { title: "Payments" };
@@ -17,7 +18,12 @@ const STATUS_VARIANT: Record<string, "success" | "warning" | "destructive" | "ou
 };
 
 export default async function AdminPaymentsPage() {
-  const payments = await getAllPayments();
+  const [payments, students, plans, courses] = await Promise.all([
+    getAllPayments(),
+    getAllStudents(),
+    getAllPricingPlans(),
+    getAllCourses(),
+  ]);
 
   const totalRevenue = payments
     .filter((p) => p.status === "SUCCEEDED")
@@ -28,13 +34,20 @@ export default async function AdminPaymentsPage() {
       <PortalSectionHeader
         title="Payments"
         description={`${formatCurrency(totalRevenue)} in total successful revenue.`}
+        action={
+          <RecordPaymentDialog
+            students={students.map((s) => ({ id: s.id, name: s.user.name, email: s.user.email }))}
+            plans={plans.map((p) => ({ key: p.key, name: p.name }))}
+            courses={courses.map((c) => ({ id: c.id, title: c.title }))}
+          />
+        }
       />
 
       {payments.length === 0 ? (
         <PortalEmptyState
           icon={CreditCard}
           title="No payments recorded yet"
-          description="Successful Stripe and PayPal transactions will appear here once billing is live."
+          description="Use the Record Payment button to log a payment you've received manually."
         />
       ) : (
         <div className="rounded-lg border border-ink-300/15 bg-white overflow-x-auto">

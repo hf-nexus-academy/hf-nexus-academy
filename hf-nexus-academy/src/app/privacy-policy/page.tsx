@@ -31,7 +31,7 @@ export default function PrivacyPolicyPage() {
             <ul className="list-disc pl-5 flex flex-col gap-2">
               <li><strong>Account information:</strong> name, email address, password (hashed), country, and WhatsApp number.</li>
               <li><strong>Profile information:</strong> age, guardian name (for minors), course progress, and learning history.</li>
-              <li><strong>Payment information:</strong> processed securely through Stripe and PayPal; we do not store full card numbers on our servers.</li>
+              <li><strong>Payment information:</strong> payments are currently arranged manually (bank transfer, mobile payment, or other agreed method); we do not store card numbers on our servers.</li>
               <li><strong>Usage data:</strong> pages visited, features used, and class attendance records.</li>
               <li><strong>Communications:</strong> messages sent via our contact form, free trial requests, and support correspondence.</li>
             </ul>

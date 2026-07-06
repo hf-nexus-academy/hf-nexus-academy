@@ -160,14 +160,6 @@ export function EditPricingPlanCard({ plan }: { plan: Plan }) {
               onChange={(e) => setForm({ ...form, features: e.target.value })}
             />
           </div>
-          <div className="flex flex-col gap-1.5">
-            <Label>Stripe Price ID</Label>
-            <Input
-              placeholder="price_xxxxxxxxxxxxx"
-              value={form.stripePriceId}
-              onChange={(e) => setForm({ ...form, stripePriceId: e.target.value })}
-            />
-          </div>
           <Button size="sm" onClick={handleSave} disabled={isSaving} className="w-fit">
             {isSaving && <Loader2 className="h-4 w-4 animate-spin" />}
             Save Plan
@@ -187,9 +179,6 @@ export function EditPricingPlanCard({ plan }: { plan: Plan }) {
               <li key={f}>{f}</li>
             ))}
           </ul>
-          <p className="text-xs text-ink-300">
-            Stripe Price ID: {plan.stripePriceId || <span className="text-destructive">Not set</span>}
-          </p>
         </div>
       )}
 

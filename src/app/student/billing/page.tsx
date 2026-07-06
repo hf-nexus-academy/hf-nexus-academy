@@ -1,11 +1,9 @@
-import { Suspense } from "react";
 import { CreditCard, CheckCircle2 } from "lucide-react";
 
 import { auth } from "@/lib/auth";
 import { prisma } from "@/lib/prisma";
 import { PortalSectionHeader } from "@/components/portal/shared/section-header";
 import { PortalEmptyState } from "@/components/portal/shared/empty-state";
-import { PayPalCaptureHandler } from "@/components/portal/student/paypal-capture-handler";
 import { Badge } from "@/components/ui/badge";
 import { formatCurrency, formatDate } from "@/lib/utils";
 
@@ -35,10 +33,6 @@ export default async function StudentBillingPage({
   return (
     <div>
       <PortalSectionHeader title="Billing" description="Your subscription and payment history." />
-
-      <Suspense>
-        <PayPalCaptureHandler />
-      </Suspense>
 
       {success && (
         <div className="flex items-center gap-3 rounded-lg border border-emerald-300 bg-emerald-50 p-5 mb-6">

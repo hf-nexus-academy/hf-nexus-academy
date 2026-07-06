@@ -72,6 +72,7 @@ enum NotificationType {
 enum PaymentProvider {
   STRIPE
   PAYPAL
+  MANUAL
 }
 
 enum PaymentStatus {

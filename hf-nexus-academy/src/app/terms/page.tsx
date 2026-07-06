@@ -47,7 +47,7 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display text-xl text-navy-950 mb-3">4. Payments and Subscriptions</h2>
             <p>
-              Subscriptions are billed monthly in advance via Stripe or PayPal.
+              Subscriptions are billed monthly in advance via your agreed payment method.
               Prices are displayed in USD, GBP, or EUR depending on your selection.
               You may cancel your subscription at any time; cancellation will take
               effect at the end of the current billing period. See our{" "}

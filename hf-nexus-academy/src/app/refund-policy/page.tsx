@@ -66,9 +66,8 @@ export default function RefundPolicyPage() {
           <section>
             <h2 className="font-display text-xl text-navy-950 mb-3">6. Processing Time</h2>
             <p>
-              Approved refunds will be processed back to your original payment
-              method (Stripe or PayPal) within 5–10 business days, depending on
-              your payment provider.
+              Approved refunds will be processed back to you using the same
+              method you originally paid with, within 5–10 business days.
             </p>
           </section>
 
