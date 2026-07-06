@@ -80,5 +80,8 @@
   },
   "prisma": {
     "seed": "tsx prisma/seed.ts"
+  },
+  "overrides": {
+    "@auth/core": "0.37.2"
   }
 }
