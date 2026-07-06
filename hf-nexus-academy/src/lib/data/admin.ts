@@ -147,10 +147,42 @@ export async function getAllPricingPlans() {
   return prisma.pricingPlan.findMany({ orderBy: { displayOrder: "asc" } });
 }
 
+function defaultSiteSettings() {
+  return {
+    id: "fallback",
+    key: "global",
+    whatsappNumber: "",
+    contactEmail: "",
+    contactPhone: "",
+    facebookUrl: "",
+    instagramUrl: "",
+    youtubeUrl: "",
+    tiktokUrl: "",
+    twitterUrl: "",
+    logoUrl: "",
+    faviconUrl: "",
+    metaTitle: "HF Nexus Academy",
+    metaDescription: "",
+    footerTagline: "",
+    googleAnalyticsId: "",
+    googleVerificationId: "",
+    updatedAt: new Date(),
+  };
+}
+
 export async function getSiteSettings() {
-  const settings = await prisma.siteSettings.findUnique({ where: { key: "global" } });
-  if (settings) return settings;
-  // First-load fallback: create the single settings row with schema defaults
-  // so the admin form and public pages always have a row to read/write.
-  return prisma.siteSettings.create({ data: { key: "global" } });
+  try {
+    const settings = await prisma.siteSettings.findUnique({ where: { key: "global" } });
+    if (settings) return settings;
+    // First-load fallback: create the single settings row with schema defaults
+    // so the admin form and public pages always have a row to read/write.
+    return await prisma.siteSettings.create({ data: { key: "global" } });
+  } catch (error) {
+    // Happens if the database isn't reachable at this moment (e.g. during
+    // Vercel's build-time prerendering of static routes). Returning safe
+    // in-memory defaults here keeps the build/page from crashing; real pages
+    // rendered at request time will hit the database normally.
+    console.error("getSiteSettings: falling back to defaults —", error);
+    return defaultSiteSettings();
+  }
 }
