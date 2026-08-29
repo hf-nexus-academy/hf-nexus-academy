@@ -62,7 +62,6 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
         "A beginner-level Fiqh course focused on building strong foundations through careful reading (ibarat), grammatical analysis (aerab), translation (tarjuma), and understanding of the classical Hanafi text Mukhtasar al-Quduri.",
       level: "BEGINNER",
       durationWeeks: 24,
-      priceMonthlyUSD: 69,
     },
     {
       slug: "fiqh-hidayah-jild-1",
@@ -71,7 +70,6 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
         "The first volume of Al-Hidayah, the foundational advanced Hanafi Fiqh text. Covers ibarat understanding, key points of ikhtilaf (scholarly difference), and practical application with real-life examples.",
       level: "ADVANCED",
       durationWeeks: 30,
-      priceMonthlyUSD: 99,
     },
     {
       slug: "fiqh-hidayah-jild-2",
@@ -80,7 +78,6 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
         "The second volume of Al-Hidayah, continuing the in-depth study of advanced Hanafi Fiqh with detailed ikhtilaf analysis and contemporary application.",
       level: "ADVANCED",
       durationWeeks: 30,
-      priceMonthlyUSD: 99,
     },
     {
       slug: "fiqh-hidayah-jild-3",
@@ -89,7 +86,6 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
         "The third volume of Al-Hidayah, deepening study of advanced fiqhi discussions, scholarly differences, and their practical implications.",
       level: "ADVANCED",
       durationWeeks: 30,
-      priceMonthlyUSD: 99,
     },
     {
       slug: "fiqh-hidayah-jild-4",
@@ -98,7 +94,6 @@ export const COURSES_BY_CATEGORY: Record<string, CourseCardData[]> = {
         "The fourth and final volume of Al-Hidayah, completing the advanced Hanafi Fiqh curriculum with comprehensive understanding of content, ikhtilaf, and real-world application.",
       level: "ADVANCED",
       durationWeeks: 30,
-      priceMonthlyUSD: 99,
     },
   ],
   arabic: [

@@ -7,7 +7,6 @@ import { CoursesOverview } from "@/components/home/courses-overview";
 import { MeetScholars } from "@/components/home/meet-scholars";
 import { StudentJourney } from "@/components/home/student-journey";
 import { Testimonials } from "@/components/home/testimonials";
-import { PricingPreview } from "@/components/home/pricing-preview";
 import { Faq } from "@/components/home/faq";
 import { FinalCta } from "@/components/home/final-cta";
 import { OrganizationSchema } from "@/components/shared/organization-schema";
@@ -30,7 +29,6 @@ export default function HomePage() {
       <MeetScholars />
       <StudentJourney />
       <Testimonials />
-      <PricingPreview />
       <Faq />
       <FinalCta />
     </>

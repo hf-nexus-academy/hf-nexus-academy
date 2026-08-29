@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Mail, MapPin } from "lucide-react";
+import { Mail, MapPin, Phone } from "lucide-react";
 import { FaWhatsapp, FaFacebookF, FaInstagram, FaYoutube, FaTiktok } from "react-icons/fa";
 
 import { ContactForm } from "@/components/forms/contact-form";
@@ -14,7 +14,8 @@ export const metadata: Metadata = {
 
 export default async function ContactPage() {
   const settings = await getSiteSettings();
-  const whatsappNumber = settings.whatsappNumber || process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+  const whatsappNumber = "923142166677";
+  const phoneNumber = "+92 314 2166677";
   const contactEmail = settings.contactEmail || "admissions@hf-nexus.com";
 
   const socialLinks = [
@@ -33,7 +34,7 @@ export default async function ContactPage() {
             We&apos;d love to hear from you
           </h1>
           <p className="mt-6 text-cream-50/70 leading-relaxed">
-            Questions about courses, pricing, or enrollment? Reach out and our team
+            Questions about courses or enrollment? Reach out and our team
             will respond promptly.
           </p>
         </div>
@@ -56,6 +57,8 @@ export default async function ContactPage() {
                 <p className="text-sm text-ink-500">Chat with our admissions team</p>
               </div>
             </a>
+
+            <a href="tel:+923142166677" className="flex items-center gap-4 rounded-lg border border-ink-300/15 bg-white p-6 hover:border-gold-500/40 hover:shadow-sm transition-all"><div className="flex h-11 w-11 items-center justify-center rounded-full bg-gold-100 text-gold-700"><Phone className="h-5 w-5" /></div><div><p className="font-display text-base text-navy-950">Phone</p><p className="text-sm text-ink-500">{phoneNumber}</p></div></a>
 
             <a
               href={`mailto:${contactEmail}`}

@@ -95,7 +95,7 @@ export default async function RootLayout({
           <Navbar />
           <main className="flex-1">{children}</main>
           <Footer />
-          <WhatsAppFloatingButton number={settings.whatsappNumber} />
+          <WhatsAppFloatingButton number="923142166677" />
           <Toaster />
         </AuthProvider>
       </body>

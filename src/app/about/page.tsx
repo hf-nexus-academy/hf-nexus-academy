@@ -25,7 +25,7 @@ const VALUES = [
     icon: ShieldCheck,
     title: "Trust & Transparency",
     description:
-      "From clear pricing to structured progress tracking, students and parents always know exactly what to expect.",
+      "From clear communication to structured progress tracking, students and parents always know exactly what to expect.",
   },
   {
     icon: Sparkles,

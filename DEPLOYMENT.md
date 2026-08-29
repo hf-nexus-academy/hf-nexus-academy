@@ -1,6 +1,5 @@
 # HF Nexus Academy — Deployment Guide
 
-This guide walks through getting the project running locally, then deploying it to production on Vercel with a real PostgreSQL database, Stripe, PayPal, and email.
 
 ---
 
@@ -9,7 +8,6 @@ This guide walks through getting the project running locally, then deploying it 
 - Node.js 18.18 or later
 - A PostgreSQL database (recommended: [Neon](https://neon.tech), [Supabase](https://supabase.com), or [Vercel Postgres](https://vercel.com/storage/postgres) — all have generous free tiers and work well with serverless deployments)
 - A [Vercel](https://vercel.com) account (for deployment)
-- Accounts with: [Stripe](https://stripe.com), [PayPal Developer](https://developer.paypal.com), [Resend](https://resend.com) (for email)
 
 ---
 
@@ -64,31 +62,15 @@ The `package.json` build script already runs `prisma generate` before `next buil
 
 ---
 
-## 4. Stripe Setup
 
-1. Create products and recurring monthly prices in the [Stripe Dashboard](https://dashboard.stripe.com/products) for each plan (Starter, Standard, Premium). Copy each **Price ID** (starts with `price_`) into:
-   - `STRIPE_PRICE_STARTER_MONTHLY`
-   - `STRIPE_PRICE_STANDARD_MONTHLY`
-   - `STRIPE_PRICE_PREMIUM_MONTHLY`
-2. Copy your **Secret key** and **Publishable key** from Developers → API keys into `STRIPE_SECRET_KEY` and `STRIPE_PUBLISHABLE_KEY` / `NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY`.
 3. Register a webhook endpoint at Developers → Webhooks:
-   - URL: `https://yourdomain.com/api/webhooks/stripe`
-   - Events to send: `checkout.session.completed`, `invoice.payment_failed`, `charge.refunded`
-   - Copy the **Signing secret** into `STRIPE_WEBHOOK_SECRET`.
-4. Test locally with the [Stripe CLI](https://stripe.com/docs/stripe-cli): `stripe listen --forward-to localhost:3000/api/webhooks/stripe`
 
 ---
 
-## 5. PayPal Setup
 
-1. Create an app in the [PayPal Developer Dashboard](https://developer.paypal.com/dashboard/applications) (use Sandbox for testing, Live for production).
-2. Copy the **Client ID** and **Secret** into `PAYPAL_CLIENT_ID` / `PAYPAL_CLIENT_SECRET`. Set `PAYPAL_MODE` to `sandbox` or `live`.
 3. Register a webhook at the app's settings page:
-   - URL: `https://yourdomain.com/api/webhooks/paypal`
    - Events: `PAYMENT.CAPTURE.COMPLETED`, `PAYMENT.CAPTURE.REFUNDED`, `PAYMENT.CAPTURE.DENIED`
-   - Copy the **Webhook ID** into `PAYPAL_WEBHOOK_ID`.
 
-**Note on the current PayPal integration:** the backend logic (order creation, capture, webhook reconciliation) is complete, but the frontend currently uses a simplified redirect flow rather than PayPal's JS SDK Buttons component. Before going live with PayPal, integrate `@paypal/react-paypal-js` or the vanilla JS SDK on the checkout dialog so users approve payment directly in PayPal's UI. This is the one piece of the payment system that needs a follow-up implementation pass.
 
 ---
 
@@ -120,10 +102,7 @@ Without this configured, the app still works — verification/reset emails are l
 1. Push this repository to GitHub/GitLab/Bitbucket.
 2. In Vercel, click **New Project** and import the repository.
 3. Vercel will auto-detect Next.js. Leave build settings as default (`npm run build`).
-4. Add every variable from `.env.example` to the project's Environment Variables (Settings → Environment Variables). Set them for both **Production** and **Preview** environments. Use your real production values for Production, and Stripe/PayPal *test/sandbox* keys for Preview if you want safe preview-deploy testing.
-5. Set `NEXT_PUBLIC_APP_URL` and `NEXTAUTH_URL` to your real production domain (e.g. `https://hf-nexus.com`) — these must match exactly for auth callbacks and Stripe/PayPal redirects to work.
 6. Deploy.
-7. Once deployed, go back to Stripe and PayPal and update the webhook URLs to point at your live domain (not `localhost`).
 8. Run the seed script against your production database once, from your local machine, by temporarily pointing your local `.env.local`'s `DATABASE_URL`/`DIRECT_URL` at the production database and running `npm run db:seed`. Immediately change the seeded passwords afterward.
 
 ### Custom domain
@@ -134,15 +113,12 @@ Add `hf-nexus.com` under Project → Settings → Domains, and follow Vercel's D
 ## 9. Post-Launch Checklist
 
 - [ ] Change all seeded account passwords
-- [ ] Verify Stripe webhook signature is being validated (check Vercel function logs after a test purchase)
-- [ ] Verify PayPal webhook signature verification is working (same)
 - [ ] Replace placeholder Google Maps embed on the Contact page with a real embed if you have a physical address
 - [ ] Have legal counsel review Privacy Policy, Terms & Conditions, and Refund Policy before relying on them
 - [ ] Submit `sitemap.xml` to Google Search Console
 - [ ] Run a Lighthouse audit against the deployed (not local) site — local dev mode is not representative of production performance
 - [ ] Confirm `/student`, `/teacher`, `/admin` do not appear in Google Search Console's indexed pages report after a few weeks (robots.txt + noindex should prevent this)
 - [ ] Set up real teacher photos (`photoUrl` field) and course cover images (`coverImageUrl`) — these are currently unset and fall back to initials/placeholder treatments
-- [ ] Implement the PayPal JS SDK Buttons flow (see Section 5 note) before accepting real PayPal payments
 - [ ] Configure Upstash Redis and add rate limiting to `/api/auth/*` and `/api/contact` routes to prevent abuse (the dependency is installed but not yet wired up)
 
 ---

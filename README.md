@@ -2,7 +2,6 @@
 
 A premium online Islamic education platform offering live classes in Quran, Hadith, Fiqh, Arabic, and classical Islamic sciences, serving students across 17+ countries.
 
-**Stack:** Next.js 15 (App Router) · TypeScript · Tailwind CSS · Framer Motion · Prisma · PostgreSQL · NextAuth v5 · React Hook Form · Zod · Stripe · PayPal
 
 ---
 
@@ -16,7 +15,6 @@ npm run db:seed
 npm run dev
 ```
 
-See **[DEPLOYMENT.md](./DEPLOYMENT.md)** for full setup instructions, including database, Stripe, PayPal, email, and Vercel deployment.
 
 ---
 
@@ -29,7 +27,6 @@ hf-nexus-academy/
 │   └── seed.ts                # Seeds admin, 3 teachers, 20 courses, 3 blog posts
 ├── src/
 │   ├── app/
-│   │   ├── (public pages)/    # Home, About, Courses, Teachers, Pricing, Blog, etc.
 │   │   ├── login/ register/ forgot-password/ reset-password/ verify-email/
 │   │   ├── student/           # Student portal (protected, role=STUDENT)
 │   │   ├── teacher/           # Teacher portal (protected, role=TEACHER|ADMIN)
@@ -39,8 +36,6 @@ hf-nexus-academy/
 │   │   │   ├── student/       # Student-facing mutations (notes, profile, submissions)
 │   │   │   ├── teacher/       # Teacher-facing mutations (lessons, assignments, grading)
 │   │   │   ├── admin/         # Admin-facing mutations (CRUD for every resource)
-│   │   │   ├── checkout/      # Stripe + PayPal order/session creation
-│   │   │   └── webhooks/      # Stripe + PayPal webhook handlers
 │   │   ├── robots.ts          # Generated robots.txt (blocks portals from indexing)
 │   │   ├── sitemap.ts         # Generated sitemap.xml (all public + dynamic pages)
 │   │   └── manifest.ts        # PWA manifest
@@ -48,7 +43,6 @@ hf-nexus-academy/
 │   │   ├── ui/                # Design-system primitives (Button, Card, Dialog, etc.)
 │   │   ├── layout/             # Navbar, Footer, WhatsApp button, Auth shell
 │   │   ├── home/               # Home page sections
-│   │   ├── shared/             # Reused across public pages (TeacherCard, PricingCards, etc.)
 │   │   ├── forms/               # Auth and lead-capture forms
 │   │   └── portal/
 │   │       ├── shared/          # Sidebar, stat cards, empty states (used by all 3 portals)
@@ -58,9 +52,7 @@ hf-nexus-academy/
 │   ├── lib/
 │   │   ├── auth.ts              # NextAuth v5 configuration
 │   │   ├── prisma.ts            # Prisma client singleton
-│   │   ├── stripe.ts / paypal.ts
 │   │   ├── email.ts             # Resend-based transactional email
-│   │   ├── constants.ts         # Pricing plans, countries, category labels
 │   │   ├── courses-data.ts / teachers-data.ts   # Static marketing-page content
 │   │   └── data/
 │   │       ├── student.ts       # Server-side queries for the student portal
@@ -84,7 +76,6 @@ hf-nexus-academy/
 
 | Role | Portal | Key capabilities |
 |---|---|---|
-| `STUDENT` | `/student` | View courses, submit assignments, track attendance/certificates, manage billing |
 | `TEACHER` | `/teacher` | Manage students, upload lessons, create/grade assignments, mark attendance, send notifications |
 | `ADMIN` | `/admin` | Full CRUD on students, teachers, courses, payments, testimonials, blog, announcements, analytics |
 

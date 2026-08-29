@@ -26,7 +26,7 @@ export default function FreeTrialPage() {
           </h1>
           <p className="mt-6 text-cream-50/70 leading-relaxed">
             Tell us a little about yourself and we&apos;ll schedule a free trial
-            class with one of our qualified scholars — no payment required.
+            class with one of our qualified scholars — with no obligation.
           </p>
         </div>
       </section>
@@ -64,6 +64,7 @@ export default function FreeTrialPage() {
               </p>
             )}
           </div>
+          <p className="mt-6 text-center text-sm text-ink-500"><a href="tel:+923142166677" className="text-gold-700 hover:underline">Call +92 314 2166677</a> or <a href="https://wa.me/923142166677" className="text-gold-700 hover:underline">message us on WhatsApp</a>.</p>
         </div>
       </section>
     </div>

@@ -14,7 +14,6 @@ const STUDENT_NAV: PortalNavItem[] = [
   { label: "Assignments", href: "/student/assignments", iconName: "ClipboardList" },
   { label: "Attendance", href: "/student/attendance", iconName: "CalendarCheck" },
   { label: "Certificates", href: "/student/certificates", iconName: "Award" },
-  { label: "Billing", href: "/student/billing", iconName: "CreditCard" },
   { label: "Notes", href: "/student/notes", iconName: "NotebookPen" },
   { label: "Profile", href: "/student/profile", iconName: "UserCircle" },
 ];

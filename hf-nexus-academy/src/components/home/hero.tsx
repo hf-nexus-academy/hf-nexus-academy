@@ -8,7 +8,7 @@ import { FaWhatsapp } from "react-icons/fa";
 import { Button } from "@/components/ui/button";
 
 export function Hero() {
-  const whatsappNumber = process.env.NEXT_PUBLIC_WHATSAPP_NUMBER || "";
+  const whatsappNumber = "923142166677";
 
   return (
     <section className="relative overflow-hidden bg-navy-950">
@@ -41,7 +41,7 @@ export function Hero() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="border-cream-50/30 text-cream-50 hover:bg-cream-50 hover:text-navy-950">
-              <Link href="/pricing">Enroll Now</Link>
+              <Link href="/free-trial">Enroll Now</Link>
             </Button>
             <a
               href={`https://wa.me/${whatsappNumber.replace(/[^0-9]/g, "")}`}

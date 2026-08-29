@@ -21,7 +21,6 @@ const FOOTER_COLUMNS = [
     links: [
       { label: "About Us", href: "/about" },
       { label: "Our Teachers", href: "/teachers" },
-      { label: "Pricing", href: "/pricing" },
       { label: "Blog", href: "/blog" },
       { label: "Free Trial", href: "/free-trial" },
     ],
@@ -34,7 +33,6 @@ const FOOTER_COLUMNS = [
       { label: "Teacher Portal", href: "/teacher" },
       { label: "Privacy Policy", href: "/privacy-policy" },
       { label: "Terms & Conditions", href: "/terms" },
-      { label: "Refund Policy", href: "/refund-policy" },
     ],
   },
 ];

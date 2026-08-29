@@ -13,8 +13,6 @@ const ADMIN_NAV: PortalNavItem[] = [
   { label: "Students", href: "/admin/students", iconName: "Users" },
   { label: "Teachers", href: "/admin/teachers", iconName: "GraduationCap" },
   { label: "Courses", href: "/admin/courses", iconName: "BookOpen" },
-  { label: "Pricing Plans", href: "/admin/pricing", iconName: "Tag" },
-  { label: "Payments", href: "/admin/payments", iconName: "CreditCard" },
   { label: "Attendance", href: "/admin/attendance", iconName: "CalendarCheck" },
   { label: "Testimonials", href: "/admin/testimonials", iconName: "MessageSquareQuote" },
   { label: "FAQs", href: "/admin/faqs", iconName: "HelpCircle" },
